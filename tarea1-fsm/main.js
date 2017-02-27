@@ -7,7 +7,7 @@ const NPC = require ('./npc');
 setInterval(() => {
   eventEmiter.update();
   eventEmiter.send("update");
-}, 100);
+}, 500);
 
 /**
  * Crear una nuevo bombillo. El agente segrega al sistema solo
@@ -21,7 +21,8 @@ new NPC("l1");
 var status = false;
 setInterval(() => {
     console.log('Ciclo 1');
-      if (status) {
+    eventEmiter.send("OnArea");
+  if (status) {
     eventEmiter.send("Healed");
     status = false;
   } else {

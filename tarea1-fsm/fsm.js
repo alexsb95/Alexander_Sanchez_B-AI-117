@@ -5,10 +5,10 @@ const eventEmiter = require('./event-emiter');
  * Maquina de estados finita.
  */
 module.exports = class Fsm {
-  constructor(owner, states) {
+  constructor(owner, states, current) {
     this._owner = owner;
     this._states = states;
-    this._current = undefined;
+    this._current = current;
     eventEmiter.register(this);
   }
   
@@ -34,8 +34,7 @@ module.exports = class Fsm {
         this._current.onUpdate(eventEmitter, this);
       }
     } else {
-      const state = this._states.find((s) => s.accepts(event));
-        console.log("estado: "+state);
+      const state = this._states.find((s) => s.accepts(event, this._current));
       const accepted = state && state !== this._current;
       if (accepted) {
         if (this._current) {
