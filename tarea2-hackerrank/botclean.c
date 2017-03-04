@@ -26,16 +26,25 @@ void move ( int toY, int toX, int fromY, int fromX, char board[5][5]) {
         
 }
 void next_move(int posr, int posc, char board[5][5]) {
- 
-    for(int i = 0; i < 5; i++){
-        for(int j = 0; j < 5; j++){
-            if(board[j][i] == 'd'){
-                move(j, i, posr, posc, board);
-                posr = j;
-                posc = i;
+    int i;
+    int j;
+    int foundFlag = 0;
+    for(i = 0; i < 5; i++){
+        for(j = 0; j < 5; j++){
+             if(board[j][i] == 'd'){
+                board[j][i] = '-';
+                foundFlag = 1;
+                break;
             }
-
         }
+
+        if(foundFlag == 1)
+            break;
+
+    }
+    if(foundFlag == 1){
+        move(j, i, posr, posc, board);
+        next_move(j, i, board);
 
     }
     
