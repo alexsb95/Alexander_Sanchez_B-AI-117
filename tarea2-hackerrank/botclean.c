@@ -2,37 +2,29 @@
 
 void move ( int toY, int toX, int fromY, int fromX, char board[5][5]) {
         if(toX < fromX){
-            for (int i = fromX; i > toX; i-- ){
-                 printf("LEFT\n");
-            }   
-        }else{
-             for (int i = fromX; i < toX; i++ ){
-              printf ("RIGHT\n");
-            }
+             printf("LEFT\n"); 
+        }else if(toX > fromX){
+            printf ("RIGHT\n");
         }
+        else if(toY < fromY){
+            printf("UP\n");
+        }else if (toY > fromY){
+            printf ("DOWN\n");
+        }else{
+            printf ("CLEAN\n");
+        }
+    
+    
 
-        if(toY < fromY){
-            for (int j = fromY; j > toY; j-- ){
-                 printf("UP\n");
-            }   
-        }else{
-             for (int j = fromY; j < toY; j++ ){
-              printf ("DOWN\n");
-            }
-        }
-    
-    
-    printf("CLEAN\n");
         
 }
 void next_move(int posr, int posc, char board[5][5]) {
     int i;
     int j;
     int foundFlag = 0;
-    for(i = 0; i < 5; i++){
-        for(j = 0; j < 5; j++){
+    for(j = 0; j < 5; j++){
+        for(i = 0; i < 5; i++){
              if(board[j][i] == 'd'){
-                board[j][i] = '-';
                 foundFlag = 1;
                 break;
             }
@@ -44,7 +36,6 @@ void next_move(int posr, int posc, char board[5][5]) {
     }
     if(foundFlag == 1){
         move(j, i, posr, posc, board);
-        next_move(j, i, board);
 
     }
     
