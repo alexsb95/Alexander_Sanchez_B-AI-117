@@ -1,0 +1,9 @@
+{
+  "main": ".\botclean.c",
+  "url": "https://www.hackerrank.com/challenges/botclean",
+  "languaje": "c",
+  "onTime": "si",
+  "score": "##",
+  "honor-code": "La informacion es correcta y se ajusta al codigo de honor y reglamentos establecidos",
+  "grupo": []
+}
