@@ -21,12 +21,12 @@ public class Solution {
 		 readSizeMatrix(pScanner);
 		 readMatrix(pScanner);
 		 
-		
+		/*
 		 System.out.println("pacman x: "+aSearch.getInitialCell().getX()+" y: "+aSearch.getInitialCell().getY());  
 		 System.out.println("food x: "+aSearch.getObjetiveCell().getX()+" y: "+aSearch.getObjetiveCell().getY()); 
 		 System.out.println("matrix x: "+aSearch.getMatrixSize().getX()+" y: "+aSearch.getMatrixSize().getY()); 
-		 
-		 aSearch.getPath();
+		 */
+		 aSearch.evaluateGrid();
 		 //aSearch.printMatrix();
 
 	 }
@@ -85,9 +85,21 @@ public class Solution {
 	 }
 	 
 	 private static void readMatrix(Scanner pScanner){
-		 ma newMatrix = new ma();
+		 /*ma newMatrix = new ma();
 	     aSearch.setMatrix(newMatrix.matrixPac);
-	        
+	     */
+		 pScanner.nextLine();
+		 String inputLine;
+		 char newMatrix [][] = new char[aSearch.getMatrixSize().getX()][aSearch.getMatrixSize().getY()];
+		 for(int x=0; x < aSearch.getMatrixSize().getX(); x++){
+			 inputLine = pScanner.nextLine();
+			 newMatrix[x] = inputLine.toCharArray();
+			// System.out.print(x+" "); System.out.println(newMatrix[x]);
+			 
+		 }
+		 
+		 aSearch.setMatrix(newMatrix);
+		 
 	 }
 	
 }
@@ -158,7 +170,7 @@ class ASearch{
 		}
 	}
 	
-	public void getPath(){
+	public void evaluateGrid(){
 		visitedCells = new boolean [matrixSize.getX()][matrixSize.getY()];
 		frontier = new PriorityList();
 
@@ -167,15 +179,17 @@ class ASearch{
 		while(frontier.size() > 0){
 			Cell current = (Cell)frontier.remove();
 			
-			System.out.println("X: "+current.getX()+ " Y: " +current.getY());
+			//System.out.println("X: "+current.getX()+ " Y: " +current.getY());
 			
 			if(current == null)
 				break;
 			
 			visitedCells[current.getX()][current.getY()] = true;
 			
-			if(current.getX() == objetiveCell.getX() && current.getY() == objetiveCell.getY())
+			if(current.getX() == objetiveCell.getX() && current.getY() == objetiveCell.getY()){
+				printPath();
 				return;
+			}
 			
 			if(current.getX() - 1 >= 0){
 				evaluateCost(current, matrix[current.getX() - 1][current.getY()]);
@@ -194,9 +208,22 @@ class ASearch{
 			}
 			
 		}
-	
 		
-
+		
+	}
+	
+	private void printPath(){
+	     Cell current = matrix[objetiveCell.getX()][objetiveCell.getY()];
+	
+	     String print = current.toString();
+	     int cost=0;
+	     while(current.getPathParent()!=null){
+	    	 print=current.getPathParent().toString()+print;
+	         current = current.getPathParent();
+	         cost++;
+	     } 
+	     System.out.println(cost);
+	     System.out.println(print);
 	}
 	
 	public void printMatrix(){
@@ -282,6 +309,11 @@ class Cell {
 	  
 	  public int getEstimatedCost(Cell pObjetive){
 		  return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
+	  }
+	  
+	  @Override
+	  public String toString(){
+		  return x+" "+y+"\n";
 	  }
 }
 
