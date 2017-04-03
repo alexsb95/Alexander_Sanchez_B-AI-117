@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -49,6 +50,7 @@ public class Solution {
         	
         	Puzzle oriPuzzle = new Puzzle(ASS.getSize(), matrix);
         	oriPuzzle.setMove("");
+        	oriPuzzle.setCostFromStart(0);
         	ASS.setOriginal(oriPuzzle);
         }
         catch (Exception e) {
@@ -62,7 +64,8 @@ class AStarSearch{
 	private int size;
 	private Puzzle original;
 	
-	ArrayList <String> visitedPuzzle;
+	private HashMap<String, Integer> visitedPuzzle;
+	private HashMap<Puzzle, Integer> inFrontier;
 	PriorityList frontier;
 
 	public int getSize() {
@@ -81,24 +84,7 @@ class AStarSearch{
 		this.original = original;
 	}
 
-	
-	private void evaluateCost(Puzzle pCurrent, Puzzle pNeighbor){
-		
-		if(pNeighbor != null && !visitedPuzzle.contains(pNeighbor.toString())){
-			int costFromStart = pCurrent.getCostFromStart() + pCurrent.getCost(pNeighbor);
-			
-			boolean inFrotier = frontier.contains(pNeighbor);
-			if(!inFrotier || costFromStart > pNeighbor.getCostFromStart()){
-				pNeighbor.setParent(pCurrent);
-				pNeighbor.setCostFromStart(costFromStart);
-				
-				if(!inFrotier){
-					frontier.add(pNeighbor);
-				}
-			}
-		}
-	}
-	
+
 	private int[][]  copyMatrix (int[][] pMatrix){
 		int[][] newMatrix = new int[size][size];
 		for (int i = 0; i < size; i++) {
@@ -179,16 +165,18 @@ class AStarSearch{
 	}
 	
 	public void evaluateGrid(){
-		visitedPuzzle = new ArrayList<>();
+		
+		visitedPuzzle = new HashMap<>();
+		inFrontier = new HashMap<>();
 		frontier = new PriorityList();
 	
 		frontier.add(original);
-		visitedPuzzle.add(original.toString());
+		visitedPuzzle.put(original.toString(), original.getCost());
+		inFrontier.put(original, 0);
 		
-		while(frontier.size() > 0){
+		while(true){
 			Puzzle current = (Puzzle)frontier.remove();
-			
-			//System.out.println("X: "+current.getX()+ " Y: " +current.getY());
+			inFrontier.remove(original.toString());
 			
 			if(current == null){
 				System.out.println("Error");
@@ -196,7 +184,7 @@ class AStarSearch{
 			}
 				
 			
-			visitedPuzzle.add(current.toString());
+			visitedPuzzle.put(current.toString(), 0);
 			
 			if(current.getEstimatedCostToGoal() == 0){
 				printPath(current);
@@ -206,8 +194,29 @@ class AStarSearch{
 			LinkedList<Puzzle> neighboors = createNegiboors(current);
 			
 			for(Puzzle neighboor :  neighboors){
-				evaluateCost(current, neighboor);
+				if(!visitedPuzzle.containsKey(neighboor.toString())){
+					int costFromStart = current.getCostFromStart() + current.getCost(neighboor);
+
+					if(!inFrontier.containsKey(neighboor)){
+						neighboor.setParent(current);
+						neighboor.setCostFromStart(costFromStart);
+						frontier.add(neighboor);
+						inFrontier.put(neighboor, 0);
+					}
+					else if(costFromStart > neighboor.getCostFromStart()){
+						neighboor.setParent(current);
+						neighboor.setCostFromStart(costFromStart);
+						frontier.add(neighboor);
+						inFrontier.put(neighboor, 0);
+					}
+				}
+				
+				
+
 			}
+
+			
+			
 				
 		}
 		
@@ -224,7 +233,7 @@ class AStarSearch{
 	         current = current.getParent();
 	         cost++;
 	     } 
-	     System.out.println(cost);
+	     System.out.print(cost);
 	     System.out.println(print);
 	}
 }

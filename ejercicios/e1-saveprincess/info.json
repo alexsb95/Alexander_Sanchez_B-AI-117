@@ -1,5 +1,5 @@
 {
-  "main": ".\saveprincess.c",
+  "main": "saveprincess.c",
   "url": "https://www.hackerrank.com/challenges/saveprincess",
   "languaje": "c",
   "onTime": "si",

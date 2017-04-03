@@ -1,5 +1,5 @@
 {
-  "main": ".\botclean.c",
+  "main": "botclean.c",
   "url": "https://www.hackerrank.com/challenges/botclean",
   "languaje": "c",
   "onTime": "si",
