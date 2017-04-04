@@ -125,7 +125,7 @@ class AStarSearch{
 		if(postion0[0] - 1 >= 0){
 			int[][] newMatrix = copyMatrix(pCurrent.getMatrix());
 			switchCells("UP", newMatrix, postion0);
-			Puzzle neighboor = new Puzzle(pCurrent.getSize(), newMatrix);	
+			Puzzle neighboor = new Puzzle(size, newMatrix);	
 			neighboor.setMove("UP");			
 			neigh.add(neighboor);
 		
@@ -135,7 +135,7 @@ class AStarSearch{
 			int[][] newMatrix = copyMatrix(pCurrent.getMatrix());
 			switchCells("LEFT", newMatrix, postion0);
 			
-			Puzzle neighboor = new Puzzle(pCurrent.getSize(), newMatrix);
+			Puzzle neighboor = new Puzzle(size, newMatrix);
 			neighboor.setMove("LEFT");
 			//System.out.println("LEFT: "+neighboor.toString());
 			neigh.add(neighboor);
@@ -145,7 +145,7 @@ class AStarSearch{
 			int[][] newMatrix = copyMatrix(pCurrent.getMatrix());
 			switchCells("DOWN", newMatrix, postion0);
 			
-			Puzzle neighboor = new Puzzle(pCurrent.getSize(), newMatrix);
+			Puzzle neighboor = new Puzzle(size, newMatrix);
 			//System.out.println("DOWN: "+neighboor.toString());
 			neighboor.setMove("DOWN");
 			neigh.add(neighboor);
@@ -155,7 +155,7 @@ class AStarSearch{
 			int[][] newMatrix = copyMatrix(pCurrent.getMatrix());
 			switchCells("RIGHT", newMatrix, postion0);
 			
-			Puzzle neighboor = new Puzzle(pCurrent.getSize(), newMatrix);
+			Puzzle neighboor = new Puzzle(size, newMatrix);
 			//System.out.println("RIGHT: "+neighboor.toString());
 			neighboor.setMove("RIGHT");
 			neigh.add(neighboor);
@@ -171,18 +171,11 @@ class AStarSearch{
 		frontier = new PriorityList();
 	
 		frontier.add(original);
-		visitedPuzzle.put(original.toString(), original.getCost());
 		inFrontier.put(original, 0);
 		
 		while(true){
 			Puzzle current = (Puzzle)frontier.remove();
-			inFrontier.remove(original.toString());
-			
-			if(current == null){
-				System.out.println("Error");
-				break;
-			}
-				
+			inFrontier.remove(current);
 			
 			visitedPuzzle.put(current.toString(), 0);
 			
@@ -195,7 +188,7 @@ class AStarSearch{
 			
 			for(Puzzle neighboor :  neighboors){
 				if(!visitedPuzzle.containsKey(neighboor.toString())){
-					int costFromStart = current.getCostFromStart() + current.getCost(neighboor);
+					int costFromStart = current.getCostFromStart() + 1;
 
 					if(!inFrontier.containsKey(neighboor)){
 						neighboor.setParent(current);
@@ -210,9 +203,6 @@ class AStarSearch{
 						inFrontier.put(neighboor, 0);
 					}
 				}
-				
-				
-
 			}
 
 			
