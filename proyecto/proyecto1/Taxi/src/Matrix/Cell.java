@@ -3,20 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package taxi;
+package Matrix;
 
 /**
  *
  * @author Alex
  */
-public class MatrixCell {
+public class Cell {
     	private int x;
 	private int y;
-	private MatrixCell pathParent;
+	private Cell pathParent;
 	private int costFromStart;
 	private int estimatedCostToGoal;
         
-        MatrixCell(int pX, int pY){
+        public Cell(int pX, int pY){
             x = pX;
             y = pY;
         }   
@@ -34,11 +34,11 @@ public class MatrixCell {
 		this.y = y;
 	}
 	
-	public MatrixCell getPathParent() {
+	public Cell getPathParent() {
 		return pathParent;
 	}
 
-	public void setPathParent(MatrixCell pathParent) {
+	public void setPathParent(Cell pathParent) {
 		this.pathParent = pathParent;
 	}
 
@@ -60,7 +60,7 @@ public class MatrixCell {
 
 
 	public int compareTo(Object other) {
-		    int v = this.getCost() - ((MatrixCell)other).getCost();
+		    int v = this.getCost() - ((Cell)other).getCost();
 		    return (v>0)?1:(v<0)?-1:0; // sign function
 	}
 	
@@ -69,7 +69,7 @@ public class MatrixCell {
 	  }
 
 	  
-	  public int getEstimatedCost(MatrixCell pObjetive){
+	  public int getEstimatedCost(Cell pObjetive){
 		  return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
 	  }
 	  
