@@ -10,8 +10,14 @@ package Algorithm;
  * @author Alex
  */
 
+/*
+    1. Crear la instancia con la matriz
+    2. Establecer el nodo inicial y final
+*/
+
 import Matrix.Cell;
 import Matrix.Block;
+import java.util.LinkedList;
 import utils.PriorityList;
 
 public class AStar {
@@ -23,18 +29,24 @@ public class AStar {
 	
 	private boolean[][] visitedCells;
 	private PriorityList frontier;
+        
+        public AStar(Cell[][] pMatrix, int pXLen, int pYLen){
+            setMatrix(pMatrix, pXLen, pYLen);
+        }
 	
 	public Cell getInitialCell() {
 		return initialCell;
 	}
 	public void setInitialCell(Cell initialCell) {
 		this.initialCell = initialCell;
+                if(matrix != null)
+                    matrix[initialCell.getX()][initialCell.getY()].setCostFromStart(0);
 	}
 	public Cell getObjetiveCell() {
 		return objetiveCell;
 	}
 	public void setObjetiveCell(Block pDestination) {                
-		this.objetiveCell = new Cell(pDestination.getX(), pDestination.getY());
+		this.objetiveCell = new Cell(pDestination.getDestX(), pDestination.getDestY());
         }
 	public Cell[][] getMatrix() {
 		return matrix;
@@ -49,15 +61,13 @@ public class AStar {
                                 matrix[x][y].setEstimatedCostToGoal( matrix[x][y].getEstimatedCost(objetiveCell));
                     }
             }
-
-            matrix[initialCell.getX()][initialCell.getY()].setCostFromStart(0);
-		
+            matrix = pMatrix;	
 	}
 	
 	
 	private void evaluateCost(Cell pCurrent, Cell pNeighbor){
 		
-		if(pNeighbor != null && !visitedCells[pNeighbor.getX()][pNeighbor.getY()]){
+		if(!visitedCells[pNeighbor.getX()][pNeighbor.getY()]){
 			int costFromStart = pCurrent.getCostFromStart() + 1;
 			
 			boolean inFrotier = frontier.contains(pNeighbor);
@@ -71,7 +81,7 @@ public class AStar {
 			}
 		}
 	}
-	
+        
 	public void evaluateGrid(){
 		visitedCells = new boolean [xLength][yLength];
 		frontier = new PriorityList();
@@ -82,10 +92,6 @@ public class AStar {
 			Cell current = (Cell)frontier.remove();
 			
 			//System.out.println("X: "+current.getX()+ " Y: " +current.getY());
-			
-			if(current == null)
-				break;
-			
 			visitedCells[current.getX()][current.getY()] = true;
 			
 			if(current.getX() == objetiveCell.getX() && current.getY() == objetiveCell.getY()){
@@ -93,19 +99,19 @@ public class AStar {
 				return;
 			}
 			
-			if(current.getX() - 1 >= 0){
+			if(matrix[current.getX() - 1][current.getY()] != null){
 				evaluateCost(current, matrix[current.getX() - 1][current.getY()]);
 			}
 			
-			if(current.getY() - 1 >= 0){
+			if(matrix[current.getX()][current.getY() - 1] != null){
 				evaluateCost(current, matrix[current.getX()][current.getY() - 1]);
 			}
 			
-			if(current.getX() + 1 < xLength){
+			if( matrix[current.getX() + 1][current.getY()] != null){
 				evaluateCost(current, matrix[current.getX() + 1][current.getY()]);
 			}
 			
-			if(current.getY() + 1 < yLength){
+			if(matrix[current.getX()][current.getY() + 1] !=  null){
 				evaluateCost(current, matrix[current.getX()][current.getY() + 1]);
 			}
 			

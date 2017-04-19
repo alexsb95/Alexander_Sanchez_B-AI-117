@@ -5,6 +5,7 @@
  */
 package Matrix;
 
+import Algorithm.AStar;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -13,9 +14,17 @@ import java.util.Random;
  *
  * @author Alex
  */
+import taxi.TaxiCab;
+
 public class Map {
     
     private Cell[][] nodeMatrix;
+    private AStar aStarAlg;
+    private TaxiCab taxi;
+    
+    public void getSendTaxi(){
+        
+    }
     
      public void readMatrix(){
         int iLen = charMatrix.length;
@@ -61,7 +70,6 @@ public class Map {
                 if(v.getX() - 1 == cli.getX() || v.getX() + 1 == cli.getX() ){
    
                     if(v.getY() - 1 == cli.getY() || v.getY() == cli.getY() || v.getY() + 1 == cli.getY()){
-                        System.out.println("Macth "+v.getX() +" "+ v.getY());
                         v.waitTaxi(cli.getDestination());
                     }
                 }

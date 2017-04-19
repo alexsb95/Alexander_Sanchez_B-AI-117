@@ -11,7 +11,6 @@ package taxi;
  */
 
 import Matrix.Map;
-import java.util.Random;
 
 public class Taxi {
 
