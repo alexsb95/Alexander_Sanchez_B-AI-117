@@ -50,11 +50,11 @@ public class Block {
     }
     
     public int getDestX(){
-        return i;
+        return i-2;
     }
    
     public int getDestY(){
-        return j-1;
+        return j;
     }
     
     private void iniStreets(){

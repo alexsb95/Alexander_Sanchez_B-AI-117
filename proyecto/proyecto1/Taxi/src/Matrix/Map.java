@@ -21,9 +21,17 @@ public class Map {
     private Cell[][] nodeMatrix;
     private AStar aStarAlg;
     private TaxiCab taxi;
+    public HashMap<Character, Block> streetBlocks;
     
-    public void getSendTaxi(){
-        
+    public void sendTaxi(Block pBlock){
+        Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
+        Cell obj = new Cell(pBlock.getDestX(), pBlock.getDestY());
+        aStarAlg.setObjetiveCell(obj);
+        aStarAlg.setInitialCell(ini);
+        //aStarAlg.printMatrix();
+        System.out.println("incial: " + aStarAlg.getInitialCell().getX() + " " + aStarAlg.getInitialCell().getY());
+        System.out.println("final: "  + aStarAlg.getObjetiveCell().getX() + " " + aStarAlg.getObjetiveCell().getY());
+        aStarAlg.evaluateGrid();
     }
     
      public void readMatrix(){
@@ -41,9 +49,9 @@ public class Map {
         System.out.println("size "+iLen+" "+jLen);
         
         ArrayList<Street> clients = new ArrayList<>();
-        HashMap<Character, Block> streetBlocks = new HashMap<>();
+        streetBlocks = new HashMap<>();
         
-        
+        /*      Reas the char matrix and defines the matrixCell, cliennts and blocks        */
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){             
                  if(charMatrix[i][j] == '-'){
@@ -59,12 +67,20 @@ public class Map {
                     
                     clients.add(client);
                     nodeMatrix[i][j] = null;
+                }else if( charMatrix[i][j] == '@' ){
+                    taxi = new TaxiCab();
+                    taxi.setCurrentPosI(i);
+                    taxi.setCurrentPosJ(j);
+                    taxi.setStatus("searching");
+                    
+                    nodeMatrix[i][j] = new Cell(i,j);
                 }else
                     nodeMatrix[i][j] = null;            
             }
             
         }
-          
+         
+        /*      Set the client on according the block they are waiting for       */
         for(Street cli: clients){
             streetBlocks.forEach((k,v) -> {
                 if(v.getX() - 1 == cli.getX() || v.getX() + 1 == cli.getX() ){
@@ -75,13 +91,22 @@ public class Map {
                 }
             });            
         }
-                   
         
+        /*     Adds an default taxi, if none is found     */
+        if(taxi == null){
+            taxi = new TaxiCab();
+            taxi.setCurrentPosI(1);
+            taxi.setCurrentPosJ(1);
+            taxi.setStatus("searching");
+        }
+        
+        aStarAlg = new AStar(nodeMatrix, iLen, jLen);
+            
     }
     
     private char[][] charMatrix =         
             {{'%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
-           {'%','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
+           {'%','@','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','%','#','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','%','A','%','-','%','*','%','-','%','B','%','-','%','*','%','-','%','C','%','-','%','*','%','-','%','D','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},

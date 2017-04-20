@@ -39,14 +39,18 @@ public class AStar {
 	}
 	public void setInitialCell(Cell initialCell) {
 		this.initialCell = initialCell;
-                if(matrix != null)
+                if(matrix != null){
                     matrix[initialCell.getX()][initialCell.getY()].setCostFromStart(0);
+
+                }
+                   
 	}
 	public Cell getObjetiveCell() {
 		return objetiveCell;
 	}
-	public void setObjetiveCell(Block pDestination) {                
-		this.objetiveCell = new Cell(pDestination.getDestX(), pDestination.getDestY());
+	public void setObjetiveCell(Cell pDestination) {                
+		this.objetiveCell = pDestination;
+                setEstimated();
         }
 	public Cell[][] getMatrix() {
 		return matrix;
@@ -55,15 +59,17 @@ public class AStar {
             xLength = pXLen;
             yLength = pYLen;
             
+            matrix = pMatrix;	
+	}
+	
+        private void setEstimated(){
             for(int x = 0; x <xLength; x++ ){
                     for(int y = 0; y < yLength; y++){
                             if(matrix[x][y] != null)
                                 matrix[x][y].setEstimatedCostToGoal( matrix[x][y].getEstimatedCost(objetiveCell));
                     }
             }
-            matrix = pMatrix;	
-	}
-	
+        }
 	
 	private void evaluateCost(Cell pCurrent, Cell pNeighbor){
 		
@@ -74,9 +80,8 @@ public class AStar {
 			if(!inFrotier || costFromStart > pNeighbor.getCostFromStart()){
 				pNeighbor.setPathParent(pCurrent);
 				pNeighbor.setCostFromStart(costFromStart);
-				
 				if(!inFrotier){
-					frontier.add(pNeighbor);
+                                    frontier.add(pNeighbor);
 				}
 			}
 		}

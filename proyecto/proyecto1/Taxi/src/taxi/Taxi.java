@@ -21,7 +21,7 @@ public class Taxi {
         //21,29
         Map matrix = new Map();
         matrix.readMatrix();
-
+        matrix.sendTaxi( matrix.streetBlocks.get('S'));
 
         // TODO code application logic here
     }
