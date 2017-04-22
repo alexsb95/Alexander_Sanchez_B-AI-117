@@ -8,7 +8,12 @@ package Matrix;
 import Algorithm.AStar;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
+
 
 /**
  *
@@ -16,14 +21,14 @@ import java.util.Random;
  */
 import taxi.TaxiCab;
 
-public class Map {
+public class CityMap {
     
     private Cell[][] nodeMatrix;
     private AStar aStarAlg;
     private TaxiCab taxi;
     public HashMap<Character, Block> streetBlocks;
     
-    public void sendTaxi(Block pBlock){
+    public ArrayList<Cell> sendTaxi(Block pBlock){
         Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
         Cell obj = new Cell(pBlock.getDestX(), pBlock.getDestY());
         aStarAlg.setObjetiveCell(obj);
@@ -31,7 +36,65 @@ public class Map {
         //aStarAlg.printMatrix();
         System.out.println("incial: " + aStarAlg.getInitialCell().getX() + " " + aStarAlg.getInitialCell().getY());
         System.out.println("final: "  + aStarAlg.getObjetiveCell().getX() + " " + aStarAlg.getObjetiveCell().getY());
-        aStarAlg.evaluateGrid();
+        
+        //Move the taxi to the destination
+        taxi.setCurrentPosI(pBlock.getDestX());
+        taxi.setCurrentPosJ(pBlock.getDestY());
+        
+        return aStarAlg.evaluateGrid();
+    }
+    
+    public void parade(){
+        Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
+        aStarAlg.setInitialCell(ini);
+        aStarAlg.moveAround();
+    }
+    
+    public ArrayList<Character> searchClients(){
+        ArrayList<Character> visitedBlocks = new ArrayList<>();
+        Character close = closetBlock(visitedBlocks, taxi.getCurrentPosI(), taxi.getCurrentPosJ());
+        
+        while(close != '*'){
+            visitedBlocks.add(close);
+            close = closetBlock(visitedBlocks, streetBlocks.get(close).getDestX(), streetBlocks.get(close).getDestY() );      
+        }
+
+        return visitedBlocks;
+    }
+    
+    
+    public Character closetBlock(ArrayList<Character> pVisited, int posI, int posJ){
+            int minDistance = Integer.MAX_VALUE;
+            char block = '*';
+
+            for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+                int blockDistance = Math.abs(posI - entry.getValue().getDestX()) + Math.abs(posJ - entry.getValue().getDestY());
+                if(minDistance > blockDistance && !pVisited.contains(entry.getKey())){
+                    minDistance = blockDistance;
+                    block = entry.getKey();
+                }
+            }
+
+        return block;
+        
+    }
+    
+    public void setClient(int pAmount){
+        ArrayList<Character> blocks = searchClients();
+        Random rnd = new Random();
+        int randOringin = rnd.nextInt(blocks.size());
+        int randDestiny = rnd.nextInt(blocks.size());
+        while(randOringin == randDestiny){
+            randDestiny = rnd.nextInt(blocks.size());
+        }
+            
+        streetBlocks.get( blocks.get(randOringin)).waitTaxi(blocks.get(randDestiny));
+        /*System.out.println("To: "+blocks.get(randOringin)+" From: "+blocks.get(randDestiny));
+        System.out.println(streetBlocks.get(blocks.get(randOringin)).blockStreets.get(0).getDestination() );*/
+    }
+    
+    public void setClient(char pOrigin, char pDestiny){
+        streetBlocks.get(pOrigin).waitTaxi(pDestiny);
     }
     
      public void readMatrix(){

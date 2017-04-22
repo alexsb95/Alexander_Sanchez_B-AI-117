@@ -10,7 +10,9 @@ package taxi;
  * @author Alex
  */
 
-import Matrix.Map;
+import Matrix.Cell;
+import Matrix.CityMap;
+import java.util.ArrayList;
 
 public class Taxi {
 
@@ -19,10 +21,23 @@ public class Taxi {
      */
     public static void main(String[] args) {
         //21,29
-        Map matrix = new Map();
+        CityMap matrix = new CityMap();
         matrix.readMatrix();
-        matrix.sendTaxi( matrix.streetBlocks.get('S'));
-
+        matrix.setClient('A','S');
+        System.out.println(matrix.streetBlocks.get('A').blockStreets.get(1).getDestination());
+        matrix.setClient(2);
+        /*
+        ArrayList<Cell> alCell = matrix.sendTaxi( matrix.streetBlocks.get('S'));
+        ArrayList<Character> al = matrix.searchClients();
+        
+        for(Cell c : alCell ){
+            System.out.println(c.toString());
+        }
+        
+        for(Character ch : al ){
+            System.out.println(ch);
+        }
+        */
         // TODO code application logic here
     }
     

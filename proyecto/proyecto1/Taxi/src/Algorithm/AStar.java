@@ -17,6 +17,7 @@ package Algorithm;
 
 import Matrix.Cell;
 import Matrix.Block;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import utils.PriorityList;
 
@@ -42,8 +43,7 @@ public class AStar {
                 if(matrix != null){
                     matrix[initialCell.getX()][initialCell.getY()].setCostFromStart(0);
 
-                }
-                   
+                }     
 	}
 	public Cell getObjetiveCell() {
 		return objetiveCell;
@@ -87,7 +87,7 @@ public class AStar {
 		}
 	}
         
-	public void evaluateGrid(){
+	public ArrayList<Cell> evaluateGrid(){
 		visitedCells = new boolean [xLength][yLength];
 		frontier = new PriorityList();
 
@@ -100,8 +100,7 @@ public class AStar {
 			visitedCells[current.getX()][current.getY()] = true;
 			
 			if(current.getX() == objetiveCell.getX() && current.getY() == objetiveCell.getY()){
-				printPath();
-				return;
+				return getPath();
 			}
 			
 			if(matrix[current.getX() - 1][current.getY()] != null){
@@ -121,12 +120,110 @@ public class AStar {
 			}
 			
 		}
-		
-		
+                
+                return null;
+			
 	}
 	
+        public void moveAround(){
+		visitedCells = new boolean [xLength][yLength];
+		frontier = new PriorityList();
+
+		frontier.add(initialCell);
+		Cell last = null;                
+		while(frontier.size() > 0){
+
+			Cell current = (Cell)frontier.remove();
+                        last = current;
+			System.out.println(current.toString());
+			//System.out.println("X: "+current.getX()+ " Y: " +current.getY());
+			visitedCells[current.getX()][current.getY()] = true;
+			
+     
+			/*if(current.getX() == objetiveCell.getX() && current.getY() == objetiveCell.getY()){
+				printPath();
+				return;
+			}*/
+              
+			if(matrix[current.getX() - 1][current.getY()] != null && !visitedCells[current.getX() - 1][current.getY()]){
+                            Cell neigh = matrix[current.getX() - 1][current.getY()];
+                            boolean inFrotier = frontier.contains(neigh);
+                            if(!inFrotier){
+                                neigh.setPathParent(current);
+                                frontier.add(neigh);                            
+                            }
+                                    
+			}  			
+			if(matrix[current.getX()][current.getY() - 1] != null && !visitedCells[current.getX()][current.getY() - 1]){
+                            Cell neigh = matrix[current.getX()][current.getY() - 1];
+                            boolean inFrotier = frontier.contains(neigh);
+                            if(!inFrotier){
+                                neigh.setPathParent(current);
+                                frontier.add(neigh);
+                            }
+
+                                                                                                
+			} 			
+			if( matrix[current.getX() + 1][current.getY()] != null && !visitedCells[current.getX() + 1][current.getY()]){
+                            Cell neigh = matrix[current.getX() + 1][current.getY()];
+                            boolean inFrotier = frontier.contains(neigh);
+                            if(!inFrotier){
+                                neigh.setPathParent(current);
+                                frontier.add(neigh); 
+                            }
+                                                            
+			} 		
+			if(matrix[current.getX()][current.getY() + 1] !=  null && !visitedCells[current.getX()][current.getY() + 1]){	
+                            Cell neigh = matrix[current.getX()][current.getY() + 1];
+                            boolean inFrotier = frontier.contains(neigh);
+                            if(!inFrotier){
+                                neigh.setPathParent(current);
+                                frontier.add(neigh);     
+                            }
+                                                               
+			}
+                        
+                        
+			
+		}
+                
+                //printPath(last);
+      
+
+			
+	}
+                
 	private void printPath(){
 	     Cell current = matrix[objetiveCell.getX()][objetiveCell.getY()];
+	
+	     String print = current.toString();
+	     int cost=0;
+	     while(current.getPathParent()!=null){
+	    	 print=current.getPathParent().toString()+print;
+	         current = current.getPathParent();
+	         cost++;
+	     } 
+	     System.out.println(cost);
+	     System.out.println(print);
+	}
+        
+        private ArrayList<Cell> getPath(){
+            ArrayList <Cell> path = new ArrayList<>();
+             
+	    Cell current = matrix[objetiveCell.getX()][objetiveCell.getY()];
+            path.add(current);
+	
+	     String print = current.toString();
+	     while(current.getPathParent()!=null){
+	    	 print=current.getPathParent().toString()+print;
+	         current = current.getPathParent();
+                 path.add(0, current);
+	     } 
+	     return path;
+	}
+        
+       private void printPath(Cell pCurrent){
+	     Cell current = pCurrent;
 	
 	     String print = current.toString();
 	     int cost=0;
@@ -152,4 +249,5 @@ public class AStar {
 		}
 		
 	}
+        
 }
