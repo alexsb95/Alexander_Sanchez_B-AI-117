@@ -28,18 +28,24 @@ public class CityMap {
     private TaxiCab taxi;
     public HashMap<Character, Block> streetBlocks;
     
-    public ArrayList<Cell> sendTaxi(Block pBlock){
+    public ArrayList<Cell> geRoute(Character pKBLock){
+        
+        Block block = streetBlocks.get(pKBLock);
         Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
-        Cell obj = new Cell(pBlock.getDestX(), pBlock.getDestY());
+        Cell obj = new Cell(block.getDestX(), block.getDestY());
         aStarAlg.setObjetiveCell(obj);
         aStarAlg.setInitialCell(ini);
         //aStarAlg.printMatrix();
         System.out.println("incial: " + aStarAlg.getInitialCell().getX() + " " + aStarAlg.getInitialCell().getY());
         System.out.println("final: "  + aStarAlg.getObjetiveCell().getX() + " " + aStarAlg.getObjetiveCell().getY());
         
+        return aStarAlg.evaluateGrid();
+    }
+    
+        public ArrayList<Cell> moveTaxi(int pI, int pJ){        
         //Move the taxi to the destination
-        taxi.setCurrentPosI(pBlock.getDestX());
-        taxi.setCurrentPosJ(pBlock.getDestY());
+        taxi.setCurrentPosI(pI);
+        taxi.setCurrentPosJ(pJ);
         
         return aStarAlg.evaluateGrid();
     }
@@ -63,7 +69,7 @@ public class CityMap {
     }
     
     
-    public Character closetBlock(ArrayList<Character> pVisited, int posI, int posJ){
+    private Character closetBlock(ArrayList<Character> pVisited, int posI, int posJ){
             int minDistance = Integer.MAX_VALUE;
             char block = '*';
 
@@ -136,6 +142,7 @@ public class CityMap {
                     taxi.setCurrentPosJ(j);
                     taxi.setStatus("searching");
                     
+                    charMatrix[i][j] = '-';
                     nodeMatrix[i][j] = new Cell(i,j);
                 }else
                     nodeMatrix[i][j] = null;            
@@ -165,6 +172,14 @@ public class CityMap {
         
         aStarAlg = new AStar(nodeMatrix, iLen, jLen);
             
+    }
+     
+    public char[][] getMap(){
+        return charMatrix;
+    }
+    
+    public TaxiCab getTaxi(){
+        return taxi;
     }
     
     private char[][] charMatrix =         
