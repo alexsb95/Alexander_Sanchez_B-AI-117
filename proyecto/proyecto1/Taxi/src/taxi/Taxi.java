@@ -80,7 +80,33 @@ public class Taxi {
         for(int cant = 0; cant < pAmount; cant++){
             moveTaxi();
         }
+        
+        if(actualRoute.isEmpty()){
+            switch(matrix.getTaxi().getStatus()){
+                case "Searching":
+                    Character destination = matrix.pickUpClient();
+                    if(destination != null){
+                        prepareRoute(destination);
+                        matrix.getTaxi().setStatus("dropingOff");
+                    }else{
+                        if(pendingHS.isEmpty()){
+                            //Selecciona la ruta actual
+                            actualRouteHS = pendingHS.pop();
+                            actualRoute = pending.pop();
+                            //Elimana el primer elemento, ya que es la posicion actual
+                            actualRoute.pop();
+                        }else
+                            searchClient();
+
+                    }
+                    break;
+            }
+        }
         //Check if the actual route reach the end
+            //If searching see if some is on the block
+            //If droping drop
+            //If parade new route
+            //IF paking stop
         return createMap();
     }
     
@@ -170,6 +196,20 @@ public class Taxi {
   
         return strTaxi;
     
+    }
+    
+    public void prepareRoute(Character destination){
+        HashMap<String, Coord> routeHS = new HashMap<String, Coord>();
+        LinkedList<Coord> route = new LinkedList<Coord>();
+
+         ArrayList <Cell> cellList = matrix.geRoute(destination);
+        for(Cell cell : cellList){
+            Coord coordenates = new Coord(cell.getX(), cell.getY());
+            routeHS.put(cell.getX() + "-" + cell.getY(), coordenates);
+            route.add(coordenates);          
+        }
+        pendingHS.add(routeHS);
+        pending.add(route);
     }
  
 }

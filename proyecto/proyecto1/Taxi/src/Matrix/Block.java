@@ -91,4 +91,17 @@ public class Block {
             }
         }
     }
+    
+    public Character pickUpClient(){   
+        Character destination = null;
+        
+        for (Street str : blockStreets){
+            if(str.isOccupied()){
+                destination = str.getDestination();
+                str.leave();
+               break;
+            }
+        }
+        return destination;
+    }
 }

@@ -85,6 +85,15 @@ public class CityMap {
         
     }
     
+    public Character pickUpClient(){
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            if( taxi.getCurrentPosI() == entry.getValue().getDestX() &&  taxi.getCurrentPosJ() == entry.getValue().getDestY()){
+                return entry.getValue().pickUpClient();
+            }
+        }
+        return null;
+    }
+    
     public void setClient(int pAmount){
         ArrayList<Character> blocks = searchClients();
         Random rnd = new Random();
