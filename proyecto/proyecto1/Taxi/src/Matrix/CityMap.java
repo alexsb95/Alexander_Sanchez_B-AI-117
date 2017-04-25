@@ -36,8 +36,8 @@ public class CityMap {
         aStarAlg.setObjetiveCell(obj);
         aStarAlg.setInitialCell(ini);
         //aStarAlg.printMatrix();
-        System.out.println("incial: " + aStarAlg.getInitialCell().getX() + " " + aStarAlg.getInitialCell().getY());
-        System.out.println("final: "  + aStarAlg.getObjetiveCell().getX() + " " + aStarAlg.getObjetiveCell().getY());
+        //System.out.println("incial: " + aStarAlg.getInitialCell().getX() + " " + aStarAlg.getInitialCell().getY());
+        //System.out.println("final: "  + aStarAlg.getObjetiveCell().getX() + " " + aStarAlg.getObjetiveCell().getY());
         
         return aStarAlg.evaluateGrid();
     }
@@ -54,6 +54,10 @@ public class CityMap {
         Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
         aStarAlg.setInitialCell(ini);
         aStarAlg.moveAround();
+        
+        /*
+            En construccion
+        */
     }
     
     public ArrayList<Character> searchClients(){
@@ -70,16 +74,16 @@ public class CityMap {
     
     
     private Character closetBlock(ArrayList<Character> pVisited, int posI, int posJ){
-            int minDistance = Integer.MAX_VALUE;
-            char block = '*';
+        int minDistance = Integer.MAX_VALUE;
+        char block = '*';
 
-            for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
-                int blockDistance = Math.abs(posI - entry.getValue().getDestX()) + Math.abs(posJ - entry.getValue().getDestY());
-                if(minDistance > blockDistance && !pVisited.contains(entry.getKey())){
-                    minDistance = blockDistance;
-                    block = entry.getKey();
-                }
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            int blockDistance = Math.abs(posI - entry.getValue().getDestX()) + Math.abs(posJ - entry.getValue().getDestY());
+            if(minDistance > blockDistance && !pVisited.contains(entry.getKey())){
+                minDistance = blockDistance;
+                block = entry.getKey();
             }
+        }
 
         return block;
         
@@ -110,6 +114,18 @@ public class CityMap {
     
     public void setClient(char pOrigin, char pDestiny){
         streetBlocks.get(pOrigin).waitTaxi(pDestiny);
+    }
+    
+    public boolean validBlock(Character pBlock){
+        boolean valid = false;
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            if(entry.getKey() == pBlock){
+                valid = true;
+                break;
+            }
+        }
+        
+        return valid;
     }
     
      public void readMatrix(){
@@ -149,7 +165,7 @@ public class CityMap {
                     taxi = new TaxiCab();
                     taxi.setCurrentPosI(i);
                     taxi.setCurrentPosJ(j);
-                    taxi.setStatus("searching");
+                    taxi.setStatus("SEARCHING");
                     
                     charMatrix[i][j] = '-';
                     nodeMatrix[i][j] = new Cell(i,j);
@@ -176,7 +192,7 @@ public class CityMap {
             taxi = new TaxiCab();
             taxi.setCurrentPosI(1);
             taxi.setCurrentPosJ(1);
-            taxi.setStatus("searching");
+            taxi.setStatus("SEARCHING");
         }
         
         aStarAlg = new AStar(nodeMatrix, iLen, jLen);
@@ -194,7 +210,7 @@ public class CityMap {
     private char[][] charMatrix =         
             {{'%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','@','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
-           {'%','-','%','#','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
+           {'%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','#','%','-','%','%','%','-','%','%','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','%','A','%','-','%','*','%','-','%','B','%','-','%','*','%','-','%','C','%','-','%','*','%','-','%','D','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','%','%','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},
            {'%','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','%','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_'},

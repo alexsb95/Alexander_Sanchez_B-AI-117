@@ -49,59 +49,72 @@ public class Taxi {
         
         matrix.readMatrix();
         
-         /*  
-        matrix.setClient('A','S');
+        /* 
+        //Prueba 0
+        addClients('A','S');
         System.out.println(matrix.streetBlocks.get('A').blockStreets.get(1).getDestination());
-        matrix.setClient(2);
-        
-        ArrayList<Cell> alCell = matrix.sendTaxi( matrix.streetBlocks.get('S'));
-        ArrayList<Character> al = matrix.searchClients();
-        
-        for(Cell c : alCell ){
-            System.out.println(c.toString());
-        }
-        
-        for(Character ch : al ){
-            System.out.println(ch);
-        }
+        addClients(2);
         */
         
+        /* 
+        System.out.println(addClients('A','S')); 
+        
+         //Prueba 1
         searchClient();
         System.out.print(createMap());
         
-        moveTaxi();
+        System.out.println(taxiPosition().i + " - "+ taxiPosition().j);
+   
+        System.out.println( play(8));
         
+        System.out.println("Ruta: "+pathHS.toString());
+        System.out.println("Ruta: "+actualRoute.toString());
+        
+        
+        /*
+        //Prueba 2
+        park('E');
         System.out.print(createMap());
         
-        System.out.print(taxiPosition().i + " - "+ taxiPosition().j);
+        System.out.println(taxiPosition().i + " - "+ taxiPosition().j);
+   
+        System.out.println( play(30));
+        
+        System.out.println("Ruta: "+pathHS.toString());
+        System.out.println("Ruta: "+actualRoute.toString());
+        */
+        
     }
     
-    public String play(int pAmount){
+    public static String play(int pAmount){
         for(int cant = 0; cant < pAmount; cant++){
             moveTaxi();
-        }
-        
-        if(actualRoute.isEmpty()){
-            switch(matrix.getTaxi().getStatus()){
-                case "Searching":
-                    Character destination = matrix.pickUpClient();
-                    if(destination != null){
-                        prepareRoute(destination);
-                        matrix.getTaxi().setStatus("dropingOff");
-                    }else{
-                        if(pendingHS.isEmpty()){
-                            //Selecciona la ruta actual
-                            actualRouteHS = pendingHS.pop();
-                            actualRoute = pending.pop();
-                            //Elimana el primer elemento, ya que es la posicion actual
-                            actualRoute.pop();
-                        }else
-                            searchClient();
-
-                    }
-                    break;
+            if(actualRoute.isEmpty()){
+                switch(matrix.getTaxi().getStatus()){
+                    case "SEARCHING":
+                        statusSearch();
+                        break;
+                        
+                    case "DROPINGOFF":
+                        searchClient();
+                        break;
+                        
+                    case "PARKING":
+                        statusWait();
+                        break;
+                        
+                    case "WAITING":
+                        //do nothing
+                        break;
+                        
+                    case "PARADE":
+                        
+                        break;
+                }
             }
         }
+
+
         //Check if the actual route reach the end
             //If searching see if some is on the block
             //If droping drop
@@ -110,17 +123,74 @@ public class Taxi {
         return createMap();
     }
     
-    public static void moveTaxi(){
-        if(!actualRoute.isEmpty()){
-            Coord newPos = actualRoute.pop();
-            pathHS.put(taxiPosition().i + "-"+ taxiPosition().j, new Coord(taxiPosition().i, taxiPosition().j));
-            matrix.moveTaxi(newPos.i, newPos.j);
+    private static void statusSearch(){
+        Character destination = matrix.pickUpClient();
+      
+        //Encontro un cliente
+        if(destination != null){
+            //Limpia la lista anterior
+            pendingHS.clear();
+            pending.clear();
+            pathHS.clear();
+            //Agrega la nueva ruta a la lista
+            prepareRoute(destination);
+            //Selecciona la ruta actual
+            actualRouteHS = pendingHS.pop();
+            actualRoute = pending.pop();
+            //Elimana el primer elemento, ya que es la posicion actual
+            Coord iniPos = actualRoute.pop();
+            pathHS.put(iniPos.toString(), iniPos);
+            
+            matrix.getTaxi().setStatus("DROPINGOFF");
+        }else{
+            //Escoge la ruta siguiente
+            if(!pendingHS.isEmpty()){
+                //Selecciona la ruta actual
+                actualRouteHS = pendingHS.pop();
+                actualRoute = pending.pop();
+                //Elimana el primer elemento, ya que es la posicion actual
+                Coord iniPos = actualRoute.pop();
+                pathHS.put(iniPos.toString(), iniPos);
+            }//Sigue buscado
+            else
+                searchClient();
+
         }
         
     }
+   
+    private static void statusWait(){
+        pendingHS.clear();
+        pending.clear();
+        pathHS.clear();
+        matrix.getTaxi().setStatus("WAITING");
+    }
+    public static boolean park(Character pDestination){
+        
+        if(matrix.validBlock(pDestination)){
+            //Limpia la lista anterior
+            pendingHS.clear();
+            pending.clear();
+            pathHS.clear();
+            //Agrega la nueva ruta a la lista
+            prepareRoute(pDestination);
+            //Selecciona la ruta actual
+            actualRouteHS = pendingHS.pop();
+            actualRoute = pending.pop();
+            //Elimana el primer elemento, ya que es la posicion actual
+            Coord iniPos = actualRoute.pop();
+            pathHS.put(iniPos.toString(), iniPos);
+
+            matrix.getTaxi().setStatus("PARKING");
+            
+            return true;
+        }else
+            return false;
+    }
     
     public static void searchClient(){
-        matrix.getTaxi().setStatus("Searching");
+        matrix.getTaxi().setStatus("SEARCHING");
+        pathHS.clear();
         
         //Obtiene la rutas de busqueda
         searchClientRoute();
@@ -128,12 +198,10 @@ public class Taxi {
         actualRouteHS = pendingHS.pop();
         actualRoute = pending.pop();
         //Elimana el primer elemento, ya que es la posicion actual
-        actualRoute.pop();
-        
-        actualRouteHS.forEach((k,v) -> {
-                System.out.println(v.i + " " + v.j);
-            });      
-        pathHS.clear();
+        Coord iniPos = actualRoute.pop();
+        pathHS.put(iniPos.toString(), iniPos);
+             
+  
     }
     
     private static void searchClientRoute(){
@@ -142,22 +210,49 @@ public class Taxi {
         Coord originTaxi = taxiPosition();
         
         for(Character ch : blockList){
-            HashMap<String, Coord> routeHS = new HashMap<String, Coord>();
-            LinkedList<Coord> route = new LinkedList<Coord>();
-            
-            cellList = matrix.geRoute(ch);
-            for(Cell cell : cellList){
-                Coord coordenates = new Coord(cell.getX(), cell.getY());
-                routeHS.put(cell.getX() + "-" + cell.getY(), coordenates);
-                route.add(coordenates);          
-            }
-            pendingHS.add(routeHS);
-            pending.add(route);
-            
+            //Agrega la ruta a la lista de pendiente
+            prepareRoute(ch);
             matrix.moveTaxi(matrix.streetBlocks.get(ch).getDestX(), matrix.streetBlocks.get(ch).getDestY());
         }
         
         matrix.moveTaxi(originTaxi.i, originTaxi.j);
+    }
+    
+    public static void addClients(int pAmount){
+        if(pAmount > 0)
+            matrix.setClient(pAmount);
+    }
+    
+    public static boolean addClients(char pOrigin, char pDesnity){
+        if(matrix.validBlock(pOrigin) && matrix.validBlock(pDesnity)){
+            matrix.setClient(pOrigin, pDesnity);
+            return true;
+        }else
+            return false;
+    }
+    
+    private static void prepareRoute(Character destination){
+        HashMap<String, Coord> routeHS = new HashMap<String, Coord>();
+        LinkedList<Coord> route = new LinkedList<Coord>();
+
+        ArrayList <Cell> cellList = matrix.geRoute(destination);
+        for(Cell cell : cellList){
+            Coord coordenates = new Coord(cell.getX(), cell.getY());
+            routeHS.put(cell.getX() + "-" + cell.getY(), coordenates);
+            route.add(coordenates);  
+        }
+        //Carga la nueva lista
+        pendingHS.add(routeHS);
+        pending.add(route);
+    }
+ 
+    private static void moveTaxi(){
+        if(!actualRoute.isEmpty()){
+            Coord newPos = actualRoute.pop();
+            pathHS.put(taxiPosition().toString(), new Coord(taxiPosition().i, taxiPosition().j));
+            matrix.moveTaxi(newPos.i, newPos.j);
+        }
+        
     }
     
     private static Coord taxiPosition(){
@@ -198,20 +293,6 @@ public class Taxi {
     
     }
     
-    public void prepareRoute(Character destination){
-        HashMap<String, Coord> routeHS = new HashMap<String, Coord>();
-        LinkedList<Coord> route = new LinkedList<Coord>();
-
-         ArrayList <Cell> cellList = matrix.geRoute(destination);
-        for(Cell cell : cellList){
-            Coord coordenates = new Coord(cell.getX(), cell.getY());
-            routeHS.put(cell.getX() + "-" + cell.getY(), coordenates);
-            route.add(coordenates);          
-        }
-        pendingHS.add(routeHS);
-        pending.add(route);
-    }
- 
 }
 
 class Coord{
@@ -221,5 +302,10 @@ class Coord{
     Coord(int pI, int pJ){
         i = pI;
         j = pJ;
+    }
+    
+    @Override
+    public String toString(){
+        return i + "-" + j;
     }
 }
