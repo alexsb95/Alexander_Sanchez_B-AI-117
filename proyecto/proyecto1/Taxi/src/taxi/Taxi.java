@@ -22,21 +22,21 @@ import java.util.Map;
 
 public class Taxi {
 
-    private static CityMap matrix;
+    private  CityMap matrix;
     
-    private static LinkedList<Coord> actualRoute;
-    private static LinkedList<LinkedList<Coord>> pending;
-    //private static LinkedList<Coord> path;
+    private  LinkedList<Coord> actualRoute;
+    private  LinkedList<LinkedList<Coord>> pending;
+    //private  LinkedList<Coord> path;
     
-    private static HashMap<String, Coord> actualRouteHS;
-    private static LinkedList<HashMap<String, Coord>> pendingHS;
-    private static HashMap<String, Coord> pathHS;
-    private static boolean routeOn;
-    private static boolean pathOn;
+    private  HashMap<String, Coord> actualRouteHS;
+    private  LinkedList<HashMap<String, Coord>> pendingHS;
+    private  HashMap<String, Coord> pathHS;
+    private  boolean routeOn;
+    private  boolean pathOn;
     
-    public static void main(String[] args) {
-        //21,29
-        /* Inicializa */
+    private int deamon;
+    
+    public Taxi (){
         matrix = new CityMap();
         
         pending = new LinkedList<LinkedList<Coord>>();
@@ -47,8 +47,15 @@ public class Taxi {
         routeOn = true;
         pathOn =  true;
         
-        matrix.readMatrix();
-        
+        deamon = 0;
+    }
+    
+    public  void main(String[] args) {
+        //21,29
+        /* Inicializa */
+
+        Taxi tx = new Taxi();
+          
         /* 
         //Prueba 0
         addClients('A','S');
@@ -83,10 +90,23 @@ public class Taxi {
         System.out.println("Ruta: "+pathHS.toString());
         System.out.println("Ruta: "+actualRoute.toString());
         */
+        /*
+        //Prueba 3 
+        tx.addClients('A','S');
+        tx.searchClient();
+        System.out.println( tx.play(8));  
+        System.out.print(tx.createMap());
         
+        
+        tx.switchRoute();
+        System.out.print(tx.createMap());
+         
+        tx.switchPath();
+        System.out.print(tx.createMap());
+        */
     }
     
-    public static String play(int pAmount){
+    public  String play(int pAmount){
         for(int cant = 0; cant < pAmount; cant++){
             moveTaxi();
             if(actualRoute.isEmpty()){
@@ -123,7 +143,7 @@ public class Taxi {
         return createMap();
     }
     
-    private static void statusSearch(){
+    private  void statusSearch(){
         Character destination = matrix.pickUpClient();
       
         //Encontro un cliente
@@ -159,13 +179,14 @@ public class Taxi {
         
     }
    
-    private static void statusWait(){
+    private  void statusWait(){
         pendingHS.clear();
         pending.clear();
         pathHS.clear();
         matrix.getTaxi().setStatus("WAITING");
     }
-    public static boolean park(Character pDestination){
+    
+    public  boolean park(Character pDestination){
         
         if(matrix.validBlock(pDestination)){
             //Limpia la lista anterior
@@ -188,7 +209,7 @@ public class Taxi {
             return false;
     }
     
-    public static void searchClient(){
+    public  void searchClient(){
         matrix.getTaxi().setStatus("SEARCHING");
         pathHS.clear();
         
@@ -204,7 +225,7 @@ public class Taxi {
   
     }
     
-    private static void searchClientRoute(){
+    private  void searchClientRoute(){
         ArrayList <Character> blockList = matrix.searchClients();
         ArrayList <Cell> cellList;
         Coord originTaxi = taxiPosition();
@@ -218,12 +239,12 @@ public class Taxi {
         matrix.moveTaxi(originTaxi.i, originTaxi.j);
     }
     
-    public static void addClients(int pAmount){
+    public  void addClients(int pAmount){
         if(pAmount > 0)
             matrix.setClient(pAmount);
     }
     
-    public static boolean addClients(char pOrigin, char pDesnity){
+    public  boolean addClients(char pOrigin, char pDesnity){
         if(matrix.validBlock(pOrigin) && matrix.validBlock(pDesnity)){
             matrix.setClient(pOrigin, pDesnity);
             return true;
@@ -231,7 +252,22 @@ public class Taxi {
             return false;
     }
     
-    private static void prepareRoute(Character destination){
+    public  void switchRoute(){
+        if(routeOn)
+            routeOn = false;
+        else
+            routeOn = true;
+    }
+    
+    public  void switchPath(){
+        if(pathOn)
+            pathOn = false;
+        else
+            pathOn = true;
+    }
+    
+    
+    private  void prepareRoute(Character destination){
         HashMap<String, Coord> routeHS = new HashMap<String, Coord>();
         LinkedList<Coord> route = new LinkedList<Coord>();
 
@@ -246,7 +282,7 @@ public class Taxi {
         pending.add(route);
     }
  
-    private static void moveTaxi(){
+    private  void moveTaxi(){
         if(!actualRoute.isEmpty()){
             Coord newPos = actualRoute.pop();
             pathHS.put(taxiPosition().toString(), new Coord(taxiPosition().i, taxiPosition().j));
@@ -255,11 +291,11 @@ public class Taxi {
         
     }
     
-    private static Coord taxiPosition(){
+    private  Coord taxiPosition(){
         return new Coord(matrix.getTaxi().getCurrentPosI(), matrix.getTaxi().getCurrentPosJ());
     }
     
-    public static String createMap(){
+    public  String createMap(){
         String strTaxi = "";
         
         //Loads in the map 

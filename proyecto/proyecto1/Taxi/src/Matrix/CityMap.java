@@ -149,6 +149,7 @@ public class CityMap {
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){             
                  if(charMatrix[i][j] == '-'){
+                    charMatrix[i][j] = ' ';
                     nodeMatrix[i][j] = new Cell(i,j);              
                 }else if( Character.toUpperCase(charMatrix[i][j]) >= 'A' && Character.toUpperCase(charMatrix[i][j]) <= 'Z' ){
                     streetBlocks.put(Character.toUpperCase(charMatrix[i][j]), new Block(i,j,Character.toUpperCase(charMatrix[i][j])));      
@@ -167,10 +168,15 @@ public class CityMap {
                     taxi.setCurrentPosJ(j);
                     taxi.setStatus("SEARCHING");
                     
-                    charMatrix[i][j] = '-';
+                    charMatrix[i][j] = ' ';
                     nodeMatrix[i][j] = new Cell(i,j);
-                }else
-                    nodeMatrix[i][j] = null;            
+                }else{
+                    if(charMatrix[i][j] == '_'){
+                        charMatrix[i][j] = ' ';  
+                    }
+                    nodeMatrix[i][j] = null; 
+                }
+                               
             }
             
         }
