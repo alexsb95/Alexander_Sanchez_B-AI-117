@@ -81,10 +81,20 @@ public class Input extends javax.swing.JFrame {
         jLabel2.setText("Mostrar");
 
         btn_path.setText("Apagado");
+        btn_path.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_pathActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Ruta");
 
         btn_route.setText("Apagado");
+        btn_route.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_routeActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Modo");
 
@@ -102,12 +112,22 @@ public class Input extends javax.swing.JFrame {
         jLabel5.setText("Cant. clientes");
 
         btn_cantClients.setText("Enviar");
+        btn_cantClients.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cantClientsActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Origen");
 
         jLabel7.setText("Destino");
 
         btn_addClient.setText("Enviar");
+        btn_addClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_addClientActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Parquear");
 
@@ -126,6 +146,11 @@ public class Input extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         btn_mode.setText("Enviar");
+        btn_mode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_modeActionPerformed(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setText("Taxi");
@@ -266,21 +291,85 @@ public class Input extends javax.swing.JFrame {
         try{
             numAnimate = Integer.parseInt(tf_animate.getText());
         }catch(Exception e){
-            //Notify errot
+            System.out.println("Error: numero incorrecto");
         }        
                
         if(numAnimate >= 0){
-            
+            simulation.setDaemon(numAnimate);
+            System.out.println(simulation.getDaemon());
         }else{
             //Valor invaludo
+            System.out.println("Error: numero incorrecto");
         }
             
         
     }//GEN-LAST:event_btn_animateActionPerformed
 
     private void btn_parkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_parkActionPerformed
-         tf_park.getText();
+
+        if(tf_park.getText().toString().length() != 0){
+            char destiny = tf_park.getText().toString().charAt(0);
+            if(!simulation.park(destiny)){
+                System.out.println("Error: Destino \'" + destiny + "\' es invalido para parquear");
+            }
+        } 
+
     }//GEN-LAST:event_btn_parkActionPerformed
+
+    private void btn_modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modeActionPerformed
+        if(rb_parade.isSelected()){
+            //  PARADE
+        }else if (rb_search.isSelected()){
+            simulation.searchClient();
+        }else{
+            System.out.println("Error: ninguna opcion seleccionada");
+        }
+    }//GEN-LAST:event_btn_modeActionPerformed
+
+    private void btn_pathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pathActionPerformed
+        simulation.switchPath();
+        if(simulation.getPathOn()){
+            btn_path.setText("Encendido");
+        }else{
+            btn_path.setText("Apagado");
+        }
+    }//GEN-LAST:event_btn_pathActionPerformed
+
+    private void btn_routeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_routeActionPerformed
+        simulation.switchRoute();
+        if(simulation.getRouteOn()){
+            btn_route.setText("Encendido");
+        }else{
+            btn_route.setText("Apagado");
+        }
+    }//GEN-LAST:event_btn_routeActionPerformed
+
+    private void btn_cantClientsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cantClientsActionPerformed
+        int numClients = -1;
+        try{
+            numClients = Integer.parseInt(tf_cantClients.getText());
+        }catch(Exception e){
+            //Notify errot
+            System.out.println("Error: cantidad de clientes incorrecta");
+        }        
+               
+        if(numClients >= 0){
+            simulation.addClients(numClients);
+        }else{
+            //Valor invaludo
+            System.out.println("Error: cantidad de clientes incorrecta");
+        }
+    }//GEN-LAST:event_btn_cantClientsActionPerformed
+
+    private void btn_addClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addClientActionPerformed
+        if(tf_origin.getText().toString().length() != 0 && tf_destiny.getText().toString().length() != 0){
+            char origin = tf_origin.getText().toString().charAt(0);
+            char destiny = tf_destiny.getText().toString().charAt(0);
+            if(!simulation.addClients(origin, destiny)){
+                System.out.println("Error: Origen \'" + origin + "\' Destino \'" + destiny + "\' es invalido para parquear");
+            }
+        } 
+    }//GEN-LAST:event_btn_addClientActionPerformed
 
     /**
      * @param args the command line arguments
@@ -310,13 +399,14 @@ public class Input extends javax.swing.JFrame {
         //</editor-fold>
 
         simulation = new Taxi();
-        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Input().setVisible(true); 
             }
         });
+
+        new Thread(simulation).start();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

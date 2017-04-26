@@ -19,13 +19,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Taxi {
+public class Taxi implements Runnable{
 
     private  CityMap matrix;
     
     private  LinkedList<Coord> actualRoute;
-    private  LinkedList<LinkedList<Coord>> pending;
+    private static LinkedList<LinkedList<Coord>> pending;
     //private  LinkedList<Coord> path;
     
     private  HashMap<String, Coord> actualRouteHS;
@@ -34,23 +36,26 @@ public class Taxi {
     private  boolean routeOn;
     private  boolean pathOn;
     
-    private int deamon;
+    private int daemon;
     
     public Taxi (){
         matrix = new CityMap();
-        
+        matrix.readMatrix();
         pending = new LinkedList<LinkedList<Coord>>();
         //path = new LinkedList<Coord>();
+
+        actualRoute = new LinkedList<Coord>();
+        actualRouteHS = new HashMap<String, Coord>();
         
         pendingHS = new LinkedList<HashMap<String, Coord>>();
         pathHS = new HashMap<String, Coord> ();
-        routeOn = true;
-        pathOn =  true;
+        routeOn = false;
+        pathOn =  false;
         
-        deamon = 0;
+        daemon = 0;
     }
     
-    public  void main(String[] args) {
+    public static void main(String[] args) {
         //21,29
         /* Inicializa */
 
@@ -104,6 +109,8 @@ public class Taxi {
         tx.switchPath();
         System.out.print(tx.createMap());
         */
+        tx.searchClient();
+
     }
     
     public  String play(int pAmount){
@@ -131,7 +138,8 @@ public class Taxi {
                         
                         break;
                 }
-            }
+            }else
+                System.out.println(actualRoute.toString());
         }
 
 
@@ -148,10 +156,12 @@ public class Taxi {
       
         //Encontro un cliente
         if(destination != null){
+            
+            System.out.println("Entro cliete\n Llevando el cliente a la cuadra "+destination);
             //Limpia la lista anterior
             pendingHS.clear();
             pending.clear();
-            pathHS.clear();
+            //pathHS.clear();
             //Agrega la nueva ruta a la lista
             prepareRoute(destination);
             //Selecciona la ruta actual
@@ -159,7 +169,8 @@ public class Taxi {
             actualRoute = pending.pop();
             //Elimana el primer elemento, ya que es la posicion actual
             Coord iniPos = actualRoute.pop();
-            pathHS.put(iniPos.toString(), iniPos);
+            if(pathOn)
+                pathHS.put(iniPos.toString(), iniPos);
             
             matrix.getTaxi().setStatus("DROPINGOFF");
         }else{
@@ -170,7 +181,8 @@ public class Taxi {
                 actualRoute = pending.pop();
                 //Elimana el primer elemento, ya que es la posicion actual
                 Coord iniPos = actualRoute.pop();
-                pathHS.put(iniPos.toString(), iniPos);
+                if(pathOn)
+                    pathHS.put(iniPos.toString(), iniPos);
             }//Sigue buscado
             else
                 searchClient();
@@ -182,7 +194,7 @@ public class Taxi {
     private  void statusWait(){
         pendingHS.clear();
         pending.clear();
-        pathHS.clear();
+        //pathHS.clear();
         matrix.getTaxi().setStatus("WAITING");
     }
     
@@ -192,7 +204,7 @@ public class Taxi {
             //Limpia la lista anterior
             pendingHS.clear();
             pending.clear();
-            pathHS.clear();
+            //pathHS.clear();
             //Agrega la nueva ruta a la lista
             prepareRoute(pDestination);
             //Selecciona la ruta actual
@@ -200,7 +212,8 @@ public class Taxi {
             actualRoute = pending.pop();
             //Elimana el primer elemento, ya que es la posicion actual
             Coord iniPos = actualRoute.pop();
-            pathHS.put(iniPos.toString(), iniPos);
+             if(pathOn)
+                pathHS.put(iniPos.toString(), iniPos);
 
             matrix.getTaxi().setStatus("PARKING");
             
@@ -211,16 +224,26 @@ public class Taxi {
     
     public  void searchClient(){
         matrix.getTaxi().setStatus("SEARCHING");
-        pathHS.clear();
+        pendingHS.clear();
+        pending.clear();
+        actualRoute.clear();
+        actualRouteHS.clear();
         
+        //pathHS.clear();
+        System.out.println("Pending:"+pending.toString());
         //Obtiene la rutas de busqueda
         searchClientRoute();
+        System.out.println("NEW Pending:"+pending.toString());
         //Selecciona la ruta actual
         actualRouteHS = pendingHS.pop();
         actualRoute = pending.pop();
+        
+        System.out.println("Nueva ruta:"+actualRoute.toString());
         //Elimana el primer elemento, ya que es la posicion actual
+        
         Coord iniPos = actualRoute.pop();
-        pathHS.put(iniPos.toString(), iniPos);
+        if(pathOn)
+            pathHS.put(iniPos.toString(), iniPos);
              
   
     }
@@ -232,6 +255,7 @@ public class Taxi {
         
         for(Character ch : blockList){
             //Agrega la ruta a la lista de pendiente
+            System.out.println("OPCION: "+ch);
             prepareRoute(ch);
             matrix.moveTaxi(matrix.streetBlocks.get(ch).getDestX(), matrix.streetBlocks.get(ch).getDestY());
         }
@@ -260,9 +284,10 @@ public class Taxi {
     }
     
     public  void switchPath(){
-        if(pathOn)
+        if(pathOn){
             pathOn = false;
-        else
+            pathHS.clear();
+        }else
             pathOn = true;
     }
     
@@ -285,7 +310,8 @@ public class Taxi {
     private  void moveTaxi(){
         if(!actualRoute.isEmpty()){
             Coord newPos = actualRoute.pop();
-            pathHS.put(taxiPosition().toString(), new Coord(taxiPosition().i, taxiPosition().j));
+            if(pathOn)
+                pathHS.put(taxiPosition().toString(), new Coord(taxiPosition().i, taxiPosition().j));
             matrix.moveTaxi(newPos.i, newPos.j);
         }
         
@@ -309,7 +335,6 @@ public class Taxi {
         
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){
-                
                 //Print the taxi
                 if(taxiPos.i == i && taxiPos.j == j){
                     strTaxi +=  '@';
@@ -317,7 +342,7 @@ public class Taxi {
                 else if(pathOn && pathHS.containsKey(i + "-" + j)){
                      strTaxi +=  '*';
                 }//Print the route
-                else if(routeOn && actualRouteHS.containsKey(i + "-" + j)){
+                else if(routeOn && actualRouteHS != null && actualRouteHS.containsKey(i + "-" + j)){
                      strTaxi +=  '+';
                 }else       
                     strTaxi +=  citymap[i][j];
@@ -328,7 +353,47 @@ public class Taxi {
         return strTaxi;
     
     }
+
+    @Override
+    public void run() {
+        
+        while(true){
+            if(daemon > 0){
+                System.out.println(play(1));
+                try {
+                    Thread.currentThread().sleep(daemon * 1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Taxi.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                try {
+                    Thread.currentThread().sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Taxi.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+
+        }
+        
+
+    }
     
+    public void setDaemon(int pAmount){
+        daemon = pAmount;
+    }
+    
+    public int getDaemon(){
+        return daemon;
+    }
+    
+    public boolean getPathOn(){
+        return pathOn;
+    }
+    
+    public boolean getRouteOn(){
+        return routeOn;
+    }
 }
 
 class Coord{
