@@ -13,6 +13,7 @@ package taxi;
 import Matrix.Block;
 import Matrix.Cell;
 import Matrix.CityMap;
+import Matrix.Coord;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashMap;
@@ -313,6 +314,8 @@ public class Taxi implements Runnable{
     public  void addClients(int pAmount){
         if(pAmount > 0)
             matrix.setClient(pAmount);
+        else if(pAmount == 0)
+            matrix.deleteClients();
     }
     
     public  boolean addClients(char pOrigin, char pDesnity){
@@ -376,6 +379,7 @@ public class Taxi implements Runnable{
         int iLen = citymap.length;
         int jLen = citymap[0].length;
         
+        HashMap <String,Coord> clientList = matrix.listClients();
         //Ask the taxi position
         Coord taxiPos = taxiPosition();
         
@@ -391,7 +395,9 @@ public class Taxi implements Runnable{
                 }//Print the route
                 else if(routeOn && actualRouteHS != null && actualRouteHS.containsKey(i + "-" + j)){
                      strTaxi +=  '+';
-                }else       
+                }else if (clientList.containsKey(i + "-" + j))
+                    strTaxi += 'o';
+                else       
                     strTaxi +=  citymap[i][j];
             }
            strTaxi += '\n';
@@ -443,17 +449,4 @@ public class Taxi implements Runnable{
     }
 }
 
-class Coord{
-    public int i;
-    public int j;
-    
-    Coord(int pI, int pJ){
-        i = pI;
-        j = pJ;
-    }
-    
-    @Override
-    public String toString(){
-        return i + "-" + j;
-    }
-}
+

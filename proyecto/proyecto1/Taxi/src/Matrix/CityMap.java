@@ -125,6 +125,33 @@ public class CityMap {
         System.out.println(streetBlocks.get(blocks.get(randOringin)).blockStreets.get(0).getDestination() );*/
     }
     
+    public void deleteClients(){
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+  
+            for(Street str: entry.getValue().blockStreets){
+                if(str.isOccupied()){
+                    str.leave();
+                }
+            }
+        }
+    }
+    
+    public HashMap<String,Coord> listClients(){
+        HashMap<String,Coord> list = new HashMap<String,Coord>();
+                
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+  
+            for(Street str: entry.getValue().blockStreets){
+                if(str.isOccupied()){
+                    Coord newCoord = new Coord(entry.getValue().getDestX() + 1, entry.getValue().getDestY());
+                    list.put(newCoord.toString(), newCoord);
+                }
+            }
+        }
+        
+        return list;
+    }
+    
     public void setClient(char pOrigin, char pDestiny){
         streetBlocks.get(pOrigin).waitTaxi(pDestiny);
     }
@@ -172,6 +199,7 @@ public class CityMap {
                     
                     clients.add(client);
                     nodeMatrix[i][j] = null;
+                    charMatrix[i][j] = '%';
                 }else if( charMatrix[i][j] == '@' ){
                     taxi = new TaxiCab();
                     taxi.setCurrentPosI(i);
