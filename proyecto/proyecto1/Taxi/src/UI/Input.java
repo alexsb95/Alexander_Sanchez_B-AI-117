@@ -318,7 +318,7 @@ public class Input extends javax.swing.JFrame {
 
     private void btn_modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_modeActionPerformed
         if(rb_parade.isSelected()){
-            //  PARADE
+            simulation.parade();
         }else if (rb_search.isSelected()){
             simulation.searchClient();
         }else{

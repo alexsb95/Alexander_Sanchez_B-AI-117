@@ -60,7 +60,7 @@ public class Taxi implements Runnable{
         /* Inicializa */
 
         Taxi tx = new Taxi();
-          
+
         /* 
         //Prueba 0
         addClients('A','S');
@@ -109,8 +109,9 @@ public class Taxi implements Runnable{
         tx.switchPath();
         System.out.print(tx.createMap());
         */
-        tx.searchClient();
-
+        tx.parade();
+        //tx.searchClient();
+        
     }
     
     public  String play(int pAmount){
@@ -135,7 +136,7 @@ public class Taxi implements Runnable{
                         break;
                         
                     case "PARADE":
-                        
+                        statusParade();
                         break;
                 }
             }else
@@ -198,6 +199,20 @@ public class Taxi implements Runnable{
         matrix.getTaxi().setStatus("WAITING");
     }
     
+    private void statusParade(){
+        if(!pendingHS.isEmpty()){
+            //Selecciona la ruta actual
+            actualRouteHS = pendingHS.pop();
+            actualRoute = pending.pop();
+            //Elimana el primer elemento, ya que es la posicion actual
+            Coord iniPos = actualRoute.pop();
+            if(pathOn)
+                pathHS.put(iniPos.toString(), iniPos);
+        }//Sigue buscado
+        else
+            parade();
+    }
+    
     public  boolean park(Character pDestination){
         
         if(matrix.validBlock(pDestination)){
@@ -220,6 +235,39 @@ public class Taxi implements Runnable{
             return true;
         }else
             return false;
+    }
+    
+    public void parade(){
+        matrix.getTaxi().setStatus("PARADE");
+        pendingHS.clear();
+        pending.clear();
+        actualRoute.clear();
+        actualRouteHS.clear();
+        
+        paradeRoute();
+        
+        actualRouteHS = pendingHS.pop();
+        actualRoute = pending.pop();
+        
+        Coord iniPos = actualRoute.pop();
+        if(pathOn)
+            pathHS.put(iniPos.toString(), iniPos);
+    }
+    
+    private void paradeRoute(){
+        
+        ArrayList <Character> blockList = matrix.parade();
+        Coord originTaxi = taxiPosition();
+        
+        for(Character ch : blockList){
+             System.out.println("OPCION: "+ch);
+            //Agrega la ruta a la lista de pendiente
+            prepareRoute(ch);
+            matrix.moveTaxi(matrix.streetBlocks.get(ch).getDestX(), matrix.streetBlocks.get(ch).getDestY());
+        }
+        
+         matrix.moveTaxi(originTaxi.i, originTaxi.j);
+        
     }
     
     public  void searchClient(){
@@ -250,7 +298,6 @@ public class Taxi implements Runnable{
     
     private  void searchClientRoute(){
         ArrayList <Character> blockList = matrix.searchClients();
-        ArrayList <Cell> cellList;
         Coord originTaxi = taxiPosition();
         
         for(Character ch : blockList){

@@ -6,6 +6,7 @@
 package Matrix;
 
 import Algorithm.AStar;
+import Algorithm.BFS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +26,13 @@ public class CityMap {
     
     private Cell[][] nodeMatrix;
     private AStar aStarAlg;
+
     private TaxiCab taxi;
     public HashMap<Character, Block> streetBlocks;
+    
+    public CityMap(){
+        
+    }
     
     public ArrayList<Cell> geRoute(Character pKBLock){
         
@@ -50,20 +56,25 @@ public class CityMap {
         return aStarAlg.evaluateGrid();
     }
     
-    public void parade(){
-        Cell ini = new Cell(taxi.getCurrentPosI(), taxi.getCurrentPosJ());
-        aStarAlg.setInitialCell(ini);
-        aStarAlg.moveAround();
+    public ArrayList<Character> parade(){
+        ArrayList<Character> visitedBlocks = new ArrayList<>();
+        ArrayList<Character> blocks = searchClients();
+        Random rnd = new Random();
+        int numRnd= rnd.nextInt(blocks.size());
         
-        /*
-            En construccion
-        */
+        visitedBlocks.add(blocks.get(numRnd));
+        
+        while(visitedBlocks.size() < blocks.size()){
+            numRnd= rnd.nextInt(blocks.size());
+            visitedBlocks.add(blocks.get(numRnd));   
+        }
+
+        return visitedBlocks;
     }
     
     public ArrayList<Character> searchClients(){
         ArrayList<Character> visitedBlocks = new ArrayList<>();
 
-        
         Character close = closetBlock(visitedBlocks, taxi.getCurrentPosI(), taxi.getCurrentPosJ());
         
         while(close != '*'){
