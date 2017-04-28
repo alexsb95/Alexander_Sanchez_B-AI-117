@@ -17,6 +17,7 @@ package Algorithm;
 
 import Matrix.Cell;
 import Matrix.Block;
+import Matrix.Coord;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import utils.PriorityList;
@@ -73,28 +74,29 @@ public class AStar {
 	
 	private void evaluateCost(Cell pCurrent, Cell pNeighbor){
 		
-		if(!visitedCells[pNeighbor.getX()][pNeighbor.getY()]){
-			int costFromStart = pCurrent.getCostFromStart() + 1;
-			
-			boolean inFrotier = frontier.contains(pNeighbor);
-			if(!inFrotier || costFromStart > pNeighbor.getCostFromStart()){
-				pNeighbor.setPathParent(pCurrent);
-				pNeighbor.setCostFromStart(costFromStart);
-				if(!inFrotier){
-                                    frontier.add(pNeighbor);
-				}
-			}
-		}
+            if(!visitedCells[pNeighbor.getX()][pNeighbor.getY()]){
+                int costFromStart = pCurrent.getCostFromStart() + 1;
+
+                boolean inFrotier = frontier.contains(pNeighbor);
+                if(!inFrotier || costFromStart > pNeighbor.getCostFromStart()){
+                    pNeighbor.setPathParent(pCurrent);
+                    pNeighbor.setCostFromStart(costFromStart);
+                    if(!inFrotier){
+                        frontier.add(pNeighbor);
+                    }
+                }
+            }
 	}
         
 	public ArrayList<Cell> evaluateGrid(){
 		visitedCells = new boolean [xLength][yLength];
 		frontier = new PriorityList();
 
-		frontier.add(initialCell);
+                frontier.add(initialCell);
 		
 		while(frontier.size() > 0){
 			Cell current = (Cell)frontier.remove();
+                        PriorityList prior = new PriorityList();
 			
 			//System.out.println("X: "+current.getX()+ " Y: " +current.getY());
 			visitedCells[current.getX()][current.getY()] = true;
@@ -103,20 +105,24 @@ public class AStar {
 				return getPath();
 			}
 			
-			if(matrix[current.getX() - 1][current.getY()] != null){
+			if(matrix[current.getX() - 1][current.getY()] != null){                      
 				evaluateCost(current, matrix[current.getX() - 1][current.getY()]);
+                                prior.add(new Coord(current.getX() - 1,current.getY()));
 			}
 			
 			if(matrix[current.getX()][current.getY() - 1] != null){
 				evaluateCost(current, matrix[current.getX()][current.getY() - 1]);
+                                prior.add(new Coord(current.getX(), current.getY() - 1));
 			}
 			
 			if( matrix[current.getX() + 1][current.getY()] != null){
 				evaluateCost(current, matrix[current.getX() + 1][current.getY()]);
+                                prior.add(new Coord(current.getX() + 1, current.getY()));
 			}
 			
 			if(matrix[current.getX()][current.getY() + 1] !=  null){
 				evaluateCost(current, matrix[current.getX()][current.getY() + 1]);
+                                prior.add(new Coord(current.getX(), current.getY() + 1));
 			}
 			
 		}
@@ -214,8 +220,36 @@ public class AStar {
             path.add(current);
 	
 	     String print = current.toString();
-	     while(current.getPathParent()!=null){
-	    	 print=current.getPathParent().toString()+print;
+	     while(current.getPathParent() != null){
+	    	 print=current.getPathParent().toString() + print;
+                 
+                PriorityList prior = new PriorityList();
+                 
+                if(matrix[current.getX() - 1][current.getY()] != null){                      
+                    prior.add(matrix[current.getX() - 1][current.getY()]);
+                }
+
+                if(matrix[current.getX()][current.getY() - 1] != null){
+                    prior.add(matrix[current.getX()][current.getY() - 1]);
+                }
+
+                if( matrix[current.getX() + 1][current.getY()] != null){
+                    prior.add(matrix[current.getX() + 1][current.getY()]);
+                }
+
+                if(matrix[current.getX()][current.getY() + 1] !=  null){
+                    prior.add(matrix[current.getX()][current.getY() + 1]);
+                }
+                        
+                ArrayList<Coord> coordList = new ArrayList<Coord>();
+                for(int index = 0; index < prior.size(); index++){
+                    Cell priorCell = (Cell) prior.get(index);
+                    coordList.add(new Coord(priorCell.getX(),priorCell.getY()));
+                }
+                
+                current.addPriority(coordList);
+                 
+                 
 	         current = current.getPathParent();
                  path.add(0, current);
 	     } 

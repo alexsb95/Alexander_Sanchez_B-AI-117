@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.PriorityList;
 
 public class Taxi implements Runnable{
 
@@ -349,6 +350,7 @@ public class Taxi implements Runnable{
         ArrayList <Cell> cellList = matrix.geRoute(destination);
         for(Cell cell : cellList){
             Coord coordenates = new Coord(cell.getX(), cell.getY());
+            coordenates.prior = cell.getPriority();
             routeHS.put(cell.getX() + "-" + cell.getY(), coordenates);
             route.add(coordenates);  
         }
@@ -380,9 +382,21 @@ public class Taxi implements Runnable{
         int jLen = citymap[0].length;
         
         HashMap <String,Coord> clientList = matrix.listClients();
+        HashMap <String, Character> prior = new HashMap <String, Character>();
         //Ask the taxi position
         Coord taxiPos = taxiPosition();
-        
+        System.out.println(" Taxi "+taxiPos.toString()+" List: ");
+        ArrayList<Coord> priorityPath = new ArrayList<Coord>();
+        if(actualRouteHS.size() > 0){
+            priorityPath = actualRouteHS.get(taxiPos.toString()).prior;
+            for(int index = 1; index <= priorityPath.size(); index++){
+                Coord priorCell = priorityPath.get(index - 1);
+                prior.put(priorCell.i + "-" + priorCell.j, (char)(index-1 + '0') );
+                System.out.print(" - "+priorCell.i + "-" + priorCell.j + "/"+(char)(index + '0'));
+            }
+            System.out.println();
+        }
+
         
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){
@@ -391,14 +405,20 @@ public class Taxi implements Runnable{
                     strTaxi +=  '@';
                 }//Print the path
                 else if(pathOn && pathHS.containsKey(i + "-" + j)){
-                     strTaxi +=  '*';
+                    strTaxi +=  '*';
+                }else if(pathOn && prior.containsKey(i + "-" + j)){
+                    strTaxi +=  prior.get(i + "-" + j);
+                
+                
                 }//Print the route
                 else if(routeOn && actualRouteHS != null && actualRouteHS.containsKey(i + "-" + j)){
                      strTaxi +=  '+';
                 }else if (clientList.containsKey(i + "-" + j))
                     strTaxi += 'o';
-                else       
+                else      
                     strTaxi +=  citymap[i][j];
+                //Print priority
+                
             }
            strTaxi += '\n';
         }

@@ -48,7 +48,7 @@ public class CityMap {
         return aStarAlg.evaluateGrid();
     }
     
-        public ArrayList<Cell> moveTaxi(int pI, int pJ){        
+    public ArrayList<Cell> moveTaxi(int pI, int pJ){        
         //Move the taxi to the destination
         taxi.setCurrentPosI(pI);
         taxi.setCurrentPosJ(pJ);

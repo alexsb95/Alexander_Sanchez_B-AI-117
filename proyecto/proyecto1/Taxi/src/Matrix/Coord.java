@@ -5,6 +5,9 @@
  */
 package Matrix;
 
+import java.util.ArrayList;
+import utils.PriorityList;
+
 /**
  *
  * @author Alex
@@ -12,6 +15,7 @@ package Matrix;
 public class Coord{
     public int i;
     public int j;
+    public ArrayList<Coord> prior;
     
     public Coord(int pI, int pJ){
         i = pI;
