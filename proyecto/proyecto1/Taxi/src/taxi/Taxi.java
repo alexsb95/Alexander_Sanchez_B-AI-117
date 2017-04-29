@@ -386,15 +386,9 @@ public class Taxi implements Runnable{
         //Ask the taxi position
         Coord taxiPos = taxiPosition();
         System.out.println(" Taxi "+taxiPos.toString()+" List: ");
-        ArrayList<Coord> priorityPath = new ArrayList<Coord>();
+        //ArrayList<Coord> priorityPath = new ArrayList<Coord>();
         if(actualRouteHS.size() > 0){
-            priorityPath = actualRouteHS.get(taxiPos.toString()).prior;
-            for(int index = 1; index <= priorityPath.size(); index++){
-                Coord priorCell = priorityPath.get(index - 1);
-                prior.put(priorCell.i + "-" + priorCell.j, (char)(index-1 + '0') );
-                System.out.print(" - "+priorCell.i + "-" + priorCell.j + "/"+(char)(index + '0'));
-            }
-            System.out.println();
+            prior = getPrior(taxiPos);
         }
 
         
@@ -403,13 +397,11 @@ public class Taxi implements Runnable{
                 //Print the taxi
                 if(taxiPos.i == i && taxiPos.j == j){
                     strTaxi +=  '@';
+                }else if(pathOn && prior.containsKey(i + "-" + j)){
+                    strTaxi +=  prior.get(i + "-" + j);
                 }//Print the path
                 else if(pathOn && pathHS.containsKey(i + "-" + j)){
                     strTaxi +=  '*';
-                }else if(pathOn && prior.containsKey(i + "-" + j)){
-                    strTaxi +=  prior.get(i + "-" + j);
-                
-                
                 }//Print the route
                 else if(routeOn && actualRouteHS != null && actualRouteHS.containsKey(i + "-" + j)){
                      strTaxi +=  '+';
@@ -427,6 +419,45 @@ public class Taxi implements Runnable{
     
     }
 
+    private HashMap <String, Character> getPrior(Coord taxiPos){
+        HashMap <String, Character> prior = new HashMap <String, Character>();
+        ArrayList<Coord> priorityPath = new ArrayList<Coord>();
+        if(actualRouteHS.size() > 0){
+            priorityPath = actualRouteHS.get(taxiPos.toString()).prior;
+            int one = -1;
+            for(int index = 1; index < priorityPath.size(); index++){
+                Coord priorCell = priorityPath.get(index);
+                if(actualRoute.peek().toString() == null ? priorCell.toString() == null : actualRoute.peek().toString().equals(priorCell.toString())){
+                    one = index;
+                }
+                prior.put(priorCell.i + "-" + priorCell.j, (char)((index) + '0') );
+                
+                System.out.print(" - "+priorCell.toString() + "/"+(char)(index + '0'));
+            }
+            System.out.println("uno:"+one);
+            if(one != 1){
+               for (Map.Entry<String, Character> entry: prior.entrySet()) {
+                    if(entry.getValue() == '1'){
+                        System.out.println("stole: "+entry.getKey());
+                        prior.put(entry.getKey(),(char)(one + '0'));
+                        break;
+                    }
+                }
+               
+                prior.put(actualRoute.peek().toString(), '1');
+            }
+  
+            
+            System.out.println();
+        }
+
+        
+        
+        
+        
+        return prior;
+    }
+    
     @Override
     public void run() {
         
