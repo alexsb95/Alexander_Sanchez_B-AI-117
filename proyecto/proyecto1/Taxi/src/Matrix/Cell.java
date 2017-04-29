@@ -5,6 +5,10 @@
  */
 package Matrix;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import utils.PriorityList;
+
 /**
  *
  * @author Alex
@@ -15,10 +19,12 @@ public class Cell {
 	private Cell pathParent;
 	private int costFromStart;
 	private int estimatedCostToGoal;
+        private ArrayList<Coord> priority;
         
         public Cell(int pX, int pY){
             x = pX;
             y = pY;
+            priority = new ArrayList<>();
         }   
         
         public int getX() {
@@ -58,6 +64,13 @@ public class Cell {
 		this.estimatedCostToGoal = estimatedCostToGoal;
 	}
 
+        public void addPriority(ArrayList<Coord> pList){
+            priority = pList;
+        }
+        
+        public ArrayList<Coord> getPriority(){
+            return priority;
+        }
 
 	public int compareTo(Object other) {
 		    int v = this.getCost() - ((Cell)other).getCost();
