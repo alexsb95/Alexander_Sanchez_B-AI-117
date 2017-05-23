@@ -387,7 +387,7 @@ public class Taxi implements Runnable{
         Coord taxiPos = taxiPosition();
         System.out.println(" Taxi "+taxiPos.toString()+" List: ");
         //ArrayList<Coord> priorityPath = new ArrayList<Coord>();
-        if(actualRouteHS.size() > 0){
+        if(actualRouteHS.size() > 0 ){
             prior = getPrior(taxiPos);
         }
 
@@ -427,7 +427,7 @@ public class Taxi implements Runnable{
             int one = -1;
             for(int index = 1; index < priorityPath.size(); index++){
                 Coord priorCell = priorityPath.get(index);
-                if(actualRoute.peek().toString() == null ? priorCell.toString() == null : actualRoute.peek().toString().equals(priorCell.toString())){
+                if(actualRoute !=  null && actualRoute.size() > 0 && priorCell != null && actualRoute.peek().toString().equals(priorCell.toString())){
                     one = index;
                 }
                 prior.put(priorCell.i + "-" + priorCell.j, (char)((index) + '0') );
@@ -435,7 +435,7 @@ public class Taxi implements Runnable{
                 System.out.print(" - "+priorCell.toString() + "/"+(char)(index + '0'));
             }
             System.out.println("uno:"+one);
-            if(one != 1){
+            if(one != 1 && actualRoute !=  null && actualRoute.size() > 0){
                for (Map.Entry<String, Character> entry: prior.entrySet()) {
                     if(entry.getValue() == '1'){
                         System.out.println("stole: "+entry.getKey());
@@ -465,7 +465,7 @@ public class Taxi implements Runnable{
             if(daemon > 0){
                 System.out.println(play(1));
                 try {
-                    Thread.currentThread().sleep(daemon * 1000);
+                    Thread.currentThread().sleep(daemon );
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Taxi.class.getName()).log(Level.SEVERE, null, ex);
                 }
