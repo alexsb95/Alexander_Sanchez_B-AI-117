@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package map;
+package entities;
 
 /**
  *
@@ -12,9 +12,34 @@ package map;
 public class Person {
     private int i;
     private int j;
-    private char workplace;
+    private char workplace;    
     private char home;
     private boolean goingHome;
+
+    public int getI() {
+        return i;
+    }
+
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    public int getJ() {
+        return j;
+    }
+
+    public void setJ(int j) {
+        this.j = j;
+    }
+
+    public void setWorkplace(char workplace) {
+        this.workplace = workplace;
+    }
+
+    public void setHome(char home) {
+        this.home = home;
+    }
+
     
     public Person (int pI, int pJ, char pWorkplace, char pHome){
         i = pI;
@@ -22,28 +47,17 @@ public class Person {
         workplace = pWorkplace;
         home = pHome;
     }
+    
+    public Person (int pI, int pJ){
+        i = pI;
+        j = pJ;
+    }
 
     public char getDestination() {
         if (goingHome)
             return home;
         else
             return workplace;
-    }
-
-    public int getX() {
-        return i;
-    }
-
-    public void setX(int i) {
-        this.i = i;
-    }
-
-    public int getY() {
-        return j;
-    }
-
-    public void setY(int j) {
-        this.j = j;
     }
     
     @Override

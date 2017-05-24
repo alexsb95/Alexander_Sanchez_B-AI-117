@@ -6,7 +6,9 @@
 package taxikarma;
 
 import map.Block;
-import map.Person;
+import utils.InputReader;
+import entities.Person;
+import map.CityMap;
 
 /**
  *
@@ -27,6 +29,19 @@ public class TaxiKarma {
         block.newPerson(ppl);
         System.out.println(block.isClientWaiting());
         System.out.println(block.pickUpClient());
+        
+        InputReader inre = new InputReader();
+        char[][] map = inre.readFile("Map.txt");
+        
+         for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[0].length; j++){ 
+                System.out.print(map[i][j]);
+            }
+            System.out.println();
+         }
+        
+        CityMap cm = new CityMap();
+        cm.iniComponents("Map.txt");
     }
     
 }

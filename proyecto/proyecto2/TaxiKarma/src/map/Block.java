@@ -5,6 +5,7 @@
  */
 package map;
 
+import entities.Person;
 import java.util.LinkedList;
 
 /**

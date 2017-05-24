@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package map;
+package utils;
 
 import java.util.ArrayList;
 
@@ -35,15 +35,6 @@ public class Coord{
     public void setJ(int j) {
         this.j = j;
     }
-
-    public ArrayList<Coord> getPrior() {
-        return prior;
-    }
-
-    public void setPrior(ArrayList<Coord> prior) {
-        this.prior = prior;
-    }
-    private ArrayList<Coord> prior;
     
     
     @Override

@@ -3,38 +3,41 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package map;
+package utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+
 
 /**
  *
  * @author Alex
  */
 public class InputReader {
-    private char[][] charMatrix;
     
-    public void readFile(String pFilename){
+    public char[][] readFile(String pFilename){
+        ArrayList<String> tempStr = new ArrayList<>();
+        char[][] matrix = null;
         
         try (BufferedReader br = new BufferedReader(new FileReader(pFilename))) {
-
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
-                    System.out.println(sCurrentLine);
+                tempStr.add(sCurrentLine);
             }
-
+            
+            // Transfrma el arraylist en un char[][]
+            matrix = new char[tempStr.size()][tempStr.get(0).length()];
+            for(int index = 0; index < tempStr.size(); index++){
+                matrix[index] = tempStr.get(index).toCharArray();
+            }
+            
         } catch (IOException e) {
                 e.printStackTrace();
         }
+        
+        return matrix;
     }
-    
-     public void readMatrix(){
-       
-            
-    }
+   
 }

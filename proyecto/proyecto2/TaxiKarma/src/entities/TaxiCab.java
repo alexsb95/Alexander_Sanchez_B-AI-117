@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package map;
+package entities;
 
-import map.Coord;
+import utils.Coord;
 import java.util.HashMap;
 import java.util.LinkedList;
+import utils.Coord;
 
 /**
  *
