@@ -3,25 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Matrix;
+package map;
 
 /**
  *
  * @author Alex
  */
-public class Street {
+public class Person {
     private int i;
     private int j;
-    private boolean occupied;
-    private char destination;
+    private char workplace;
+    private char home;
+    private boolean goingHome;
     
-    Street (int pI, int pJ){
+    public Person (int pI, int pJ, char pWorkplace, char pHome){
         i = pI;
         j = pJ;
+        workplace = pWorkplace;
+        home = pHome;
     }
 
     public char getDestination() {
-        return destination;
+        if (goingHome)
+            return home;
+        else
+            return workplace;
     }
 
     public int getX() {
@@ -39,18 +45,10 @@ public class Street {
     public void setY(int j) {
         this.j = j;
     }
-
-    public boolean isOccupied() {
-        return occupied;
-    }
-
-    public void take(char pDestination) {
-        this.destination = pDestination;
-        this.occupied = true;
-    }
     
-    public void leave (){
-        this.occupied = false;
+    @Override
+    public String toString(){
+        return i + "-" + j + " wrk: " + workplace + " home: " + home;
     }
     
 }

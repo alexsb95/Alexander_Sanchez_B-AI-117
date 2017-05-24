@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package taxi;
+package map;
 
-import Matrix.Coord;
+import map.Coord;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -16,12 +16,19 @@ import java.util.LinkedList;
 public class TaxiCab {
     private int currentPosI;
     private int currentPosJ;
+    private boolean isOccupied;
+    private String status;
+    private int desI;
+    private int desJ;
+    
+    
     private  LinkedList<Coord> actualRoute;
     private static LinkedList<LinkedList<Coord>> pending;
 
     private  HashMap<String, Coord> actualRouteHS;
     private  LinkedList<HashMap<String, Coord>> pendingHS;
     private  HashMap<String, Coord> pathHS;
+
     
     public TaxiCab(){
         pending = new LinkedList<LinkedList<Coord>>();
@@ -110,7 +117,5 @@ public class TaxiCab {
     public void setDesJ(int desJ) {
         this.desJ = desJ;
     }
-    private String status;
-    private int desI;
-    private int desJ;
+
 }
