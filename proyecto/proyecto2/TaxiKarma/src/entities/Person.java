@@ -1,5 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
+ * To change this license header, choose License Headers in ProcurrentJect Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -9,27 +9,49 @@ package entities;
  *
  * @author Alex
  */
-public class Person {
-    private int i;
-    private int j;
+public class Person implements Entities {
+    private int currentI;
+    private int currentJ;
     private char workplace;    
     private char home;
-    private boolean goingHome;
-
-    public int getI() {
-        return i;
+    private char currentBlock;
+    
+    public Person (int pI, int pJ, char pWorkplace, char pHome, char pCurrentBlock){
+        currentI = pI;
+        currentJ = pJ;
+        workplace = pWorkplace;
+        home = pHome;
+        currentBlock = pCurrentBlock;
+    }
+    
+    public Person (int pI, int pJ){
+        currentI = pI;
+        currentJ = pJ;
     }
 
-    public void setI(int i) {
-        this.i = i;
+    
+    public char getCurrentBlock() {
+        return currentBlock;
     }
 
-    public int getJ() {
-        return j;
+    public void setCurrentBlock(char currentBlock) {
+        this.currentBlock = currentBlock;
     }
 
-    public void setJ(int j) {
-        this.j = j;
+    public int getCurrentI() {
+        return currentI;
+    }
+
+    public void setCurrentI(int currentI) {
+        this.currentI = currentI;
+    }
+
+    public int getCurrentJ() {
+        return currentJ;
+    }
+
+    public void setCurrentJ(int currentJ) {
+        this.currentJ = currentJ;
     }
 
     public void setWorkplace(char workplace) {
@@ -39,30 +61,10 @@ public class Person {
     public void setHome(char home) {
         this.home = home;
     }
-
-    
-    public Person (int pI, int pJ, char pWorkplace, char pHome){
-        i = pI;
-        j = pJ;
-        workplace = pWorkplace;
-        home = pHome;
-    }
-    
-    public Person (int pI, int pJ){
-        i = pI;
-        j = pJ;
-    }
-
-    public char getDestination() {
-        if (goingHome)
-            return home;
-        else
-            return workplace;
-    }
     
     @Override
     public String toString(){
-        return i + "-" + j + " wrk: " + workplace + " home: " + home;
+        return currentI + "-" + currentJ+ " crntblock: " + currentBlock + " wrk: " + workplace + " home: " + home;
     }
     
 }

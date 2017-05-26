@@ -15,8 +15,8 @@ import utils.Coord;
  * @author Alex
  */
 public class TaxiCab {
-    private int currentPosI;
-    private int currentPosJ;
+    private int currentI;
+    private int currentJ;
     private boolean isOccupied;
     private String status;
     private int desI;
@@ -79,20 +79,20 @@ public class TaxiCab {
         this.actualRoute = actualRoute;
     }
 
-    public int getCurrentPosI() {
-        return currentPosI;
+    public int getCurrentI() {
+        return currentI;
     }
 
-    public void setCurrentPosI(int currentPosI) {
-        this.currentPosI = currentPosI;
+    public void setCurrentI(int currentI) {
+        this.currentI = currentI;
     }
 
-    public int getCurrentPosJ() {
-        return currentPosJ;
+    public int getCurrentJ() {
+        return currentJ;
     }
 
-    public void setCurrentPosJ(int currentPosJ) {
-        this.currentPosJ = currentPosJ;
+    public void setCurrentJ(int currentJ) {
+        this.currentJ = currentJ;
     }
 
     public String getStatus() {

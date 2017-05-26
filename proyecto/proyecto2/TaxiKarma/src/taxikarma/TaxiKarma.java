@@ -5,6 +5,7 @@
  */
 package taxikarma;
 
+import algorithm.Cell;
 import map.Block;
 import utils.InputReader;
 import entities.Person;
@@ -20,8 +21,8 @@ public class TaxiKarma {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Person ppl = new Person(1,1,'A','B');
-        System.out.println(ppl.getDestination());
+        Person ppl = new Person(1,1,'A','B','A');
+        //System.out.println(ppl.getDestination());
         System.out.println(ppl.toString());
         
         Block block = new Block(2,2,'A');
@@ -42,6 +43,9 @@ public class TaxiKarma {
         
         CityMap cm = new CityMap();
         cm.iniComponents("Map.txt");
+        Cell[][] var = cm.nodeMatrix;
+        System.out.println(cm.toString());
+        
     }
     
 }
