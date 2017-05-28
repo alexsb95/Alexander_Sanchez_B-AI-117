@@ -9,6 +9,7 @@ import algorithm.Cell;
 import map.Block;
 import utils.InputReader;
 import entities.Person;
+import fsm.EventEmiter;
 import map.CityMap;
 
 /**
@@ -21,14 +22,16 @@ public class TaxiKarma {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Person ppl = new Person(1,1,'A','B','A');
+        EventEmiter overLord = new EventEmiter();
+        
+        Person ppl = new Person(1,1,'A','B','A',overLord);
         //System.out.println(ppl.getDestination());
         System.out.println(ppl.toString());
         
         Block block = new Block(2,2,'A');
-        System.out.println(block.isClientWaiting());
+        System.out.println(block.areClientsWaiting());
         block.newPerson(ppl);
-        System.out.println(block.isClientWaiting());
+        System.out.println(block.areClientsWaiting());
         System.out.println(block.pickUpClient());
         
         InputReader inre = new InputReader();
@@ -41,7 +44,7 @@ public class TaxiKarma {
             System.out.println();
          }
         
-        CityMap cm = new CityMap();
+        CityMap cm = new CityMap(overLord);
         cm.iniComponents("Map.txt");
         Cell[][] var = cm.nodeMatrix;
         System.out.println(cm.toString());

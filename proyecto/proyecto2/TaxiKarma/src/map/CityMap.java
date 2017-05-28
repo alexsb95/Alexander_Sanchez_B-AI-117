@@ -4,6 +4,7 @@ package map;
 import algorithm.AStar;
 import algorithm.Cell;
 import entities.Person;
+import fsm.EventEmiter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +20,14 @@ public class CityMap {
    private InputReader reader;
    public Cell[][] nodeMatrix;
    private char[][] charMatrix;
-   private ArrayList<Person> clientList;
+   private ArrayList<Person> nonWaiting;
    private HashMap<Character, Block> streetBlocks;
-    ArrayList<Character> posibleBlocks;
+   ArrayList<Character> posibleBlocks;
+   EventEmiter overlord;
+   
+   public CityMap(EventEmiter pEmiter){
+       overlord = pEmiter;
+   }
 
    public void iniComponents(String pFileName){
        reader = new InputReader();
@@ -89,10 +95,8 @@ public class CityMap {
         }
         
         /*  initialization of the clients   */
-        clientList = new ArrayList<>();
+        nonWaiting = new ArrayList<>();
         setNewClients(clients, posibleBlocks);
-
-
    }
    
    private void setNewClients(ArrayList<Person> pClients, ArrayList<Character> pStreetBlock){
@@ -117,11 +121,11 @@ public class CityMap {
         /*      Looks for the current block         */
         for (Map.Entry<Character, Block> entry: streetBlocks.entrySet()) {
             if(entry.getValue().isStreet(pI, pJ)){
-                client = new Person(pI, pJ, pOrigin, pDestiny, entry.getKey());
+                client = new Person(pI, pJ, pOrigin, pDestiny, entry.getKey(), overlord);
                 //Adds it as wating client on th block
                 entry.getValue().newPerson(client);
-                // Adds it to the clientList 
-                clientList.add(client);
+                // Adds it to the nonWaiting 
+                nonWaiting.add(client);
                 return true;
             }
         }
@@ -145,6 +149,7 @@ public class CityMap {
         
     }
     
+    
         
     private boolean validBlock(Character pBlock){
         return streetBlocks.containsKey(pBlock);
@@ -153,6 +158,6 @@ public class CityMap {
     
     @Override
     public String toString(){
-        return clientList.toString();
+        return nonWaiting.toString();
     }
 }

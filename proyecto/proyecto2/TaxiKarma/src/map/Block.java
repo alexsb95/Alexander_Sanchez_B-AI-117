@@ -6,7 +6,7 @@
 package map;
 
 import entities.Person;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,14 +16,14 @@ public class Block {
     private int i;
     private int j;
     private char symbol;
-    private LinkedList<Person> peopleWaiting;
+    private ArrayList<Person> people;
     private int[][] sidewalks;
 
     public Block (int pI, int pJ, char pSymbol){
         i = pI;
         j = pJ;
         symbol = pSymbol;
-        peopleWaiting = new LinkedList<>();  
+        people = new ArrayList<>();  
         sidewalks = new int [][]{ {i - 1, j - 1}, { i - 1, j}, {i - 1 , j + 1} };
     }
     
@@ -61,23 +61,35 @@ public class Block {
     }
      
     public void newPerson(Person pPerson){
-        peopleWaiting.add(pPerson);
+        people.add(pPerson);
     }
     
     //Puede retornar null -- analizar maquinas de estado
     public Person pickUpClient(){   
       
-        if(isClientWaiting()){
-            Person client = peopleWaiting.pop();
-            //destination = client.getDestination();
-            return client;
+        if(!people.isEmpty()){
+            for(int index = 0; index < people.size(); index++ ){
+                if("Waiting".equals(people.get(index).getCurrentState())){
+                    Person client = people.get(index);
+                    people.remove(index);
+                    return client;
+                }
+            }
         }
         
         return null;
     }
-    //Puede retornar null -- analizar maquinas de estado
-    public boolean isClientWaiting(){
-        return !peopleWaiting.isEmpty();
+    
+    public boolean areClientsWaiting(){
+            if(!people.isEmpty()){
+            for(int index = 0; index < people.size(); index++ ){
+                if("Waiting".equals(people.get(index).getCurrentState())){
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     public boolean isStreet(int pI, int pJ){
@@ -92,6 +104,6 @@ public class Block {
 
     @Override
     public String toString(){
-        return symbol + ": " + i + "-" + j + " list: " +peopleWaiting.toString();
+        return symbol + ": " + i + "-" + j + " list: " +people.toString();
     }
 }

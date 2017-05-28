@@ -6,8 +6,6 @@
 package Matrix;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import utils.PriorityList;
 
 /**
  *
