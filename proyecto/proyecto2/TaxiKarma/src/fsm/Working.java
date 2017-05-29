@@ -22,7 +22,10 @@ public class Working implements State{
     }
 
     @Override
-    public void onEnter(FSM fsm) { }
+    public void onEnter(FSM fsm) {
+        Person ppl = (Person)fsm.getOwner();
+        ppl.startTime();
+    }
 
     @Override
     public void onUpdate(FSM fsm) { 
@@ -33,7 +36,7 @@ public class Working implements State{
     @Override
     public void onExit(FSM fsm) {
         Person ppl = (Person)fsm.getOwner();
-        ppl.setDestination("goHome");
+        ppl.setDestination(ppl.getWorkplace());
     }
 
     @Override

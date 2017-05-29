@@ -5,32 +5,36 @@
  */
 package fsm;
 
-import entities.Person;
+import entities.TaxiCab;
 
 /**
  *
  * @author Alex
  */
-public class Waiting implements State{
+public class OnRoute implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("wait".equals(pMessage)){
+        if("pickUp".equals(pMessage) && ("Searching".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState())) ){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM fsm) { }
+    public void onEnter(FSM fsm) {
+        TaxiCab cab = (TaxiCab) fsm.getOwner();
+        
+    }
 
     @Override
-    public void onUpdate(FSM fsm) {  }
+    public void onUpdate(FSM fsm) { }
 
     @Override
     public void onExit(FSM fsm) { }
+
     @Override
-    public String getState(){
+    public String getState() {
         return this.getClass().getSimpleName();
     }
     

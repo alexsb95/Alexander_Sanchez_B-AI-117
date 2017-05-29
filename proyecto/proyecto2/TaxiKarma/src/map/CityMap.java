@@ -4,6 +4,7 @@ package map;
 import algorithm.AStar;
 import algorithm.Cell;
 import entities.Person;
+import entities.TaxiCab;
 import fsm.EventEmiter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +23,14 @@ public class CityMap {
    private char[][] charMatrix;
    private ArrayList<Person> nonWaiting;
    private HashMap<Character, Block> streetBlocks;
-   ArrayList<Character> posibleBlocks;
-   EventEmiter overlord;
-   
+   private ArrayList<Character> posibleBlocks;
+   private EventEmiter overlord;
+   private int defaultTimer;
+   private ArrayList<TaxiCab> inicialTaxi;
+
    public CityMap(EventEmiter pEmiter){
        overlord = pEmiter;
+       defaultTimer = 5;
    }
 
    public void iniComponents(String pFileName){
@@ -51,7 +55,7 @@ public class CityMap {
         
         /*j => 0 1 2 */
         nodeMatrix = new Cell[pLengthI][pLenghtJ + 1];
-    
+        inicialTaxi = new ArrayList<>();
         System.out.println("size "+pLengthI+" "+pLenghtJ);
         
         ArrayList<Person> clients = new ArrayList<>();
@@ -76,11 +80,10 @@ public class CityMap {
                     nodeMatrix[i][j] = null;
                     pMatrix[i][j] = '%';
                 }else if( pMatrix[i][j] == '@' ){
-                    /*taxi = new TaxiCab();
-                    taxi.setCurrentPosI(i);
-                    taxi.setCurrentPosJ(j);
-                    taxi.setStatus("WAITING");*/
-                    
+                    TaxiCab taxi = new TaxiCab(overlord);
+                    taxi.setCurrentI(i);
+                    taxi.setCurrentJ(j);
+                    inicialTaxi.add(taxi);
                     pMatrix[i][j] = ' ';
                     nodeMatrix[i][j] = new Cell(i,j);
                 }else{
@@ -117,15 +120,14 @@ public class CityMap {
    
     public boolean addNewClient(int pI, int pJ, char pOrigin, char pDestiny){
         Person client = null;
-
         /*      Looks for the current block         */
         for (Map.Entry<Character, Block> entry: streetBlocks.entrySet()) {
             if(entry.getValue().isStreet(pI, pJ)){
                 client = new Person(pI, pJ, pOrigin, pDestiny, entry.getKey(), overlord);
-                //Adds it as wating client on th block
+                client.setTimer(defaultTimer);
+                // Adds it to the corresponding block 
                 entry.getValue().newPerson(client);
-                // Adds it to the nonWaiting 
-                nonWaiting.add(client);
+                System.out.println(client.toString());
                 return true;
             }
         }
@@ -135,15 +137,15 @@ public class CityMap {
     
     public void addSeveralClients(int pAmount){
         int home, work;
+        boolean wasAdded;
         for(int cant=0; cant < pAmount; cant++){
             Random rnd = new Random();
-            work = rnd.nextInt(posibleBlocks.size() - 1);      
+            work = rnd.nextInt(posibleBlocks.size() - 1);
              do {  
                 home = rnd.nextInt(posibleBlocks.size() - 1);
-            } while ( home == work && !addNewClient(streetBlocks.get(home).getI(), 
-                                        streetBlocks.get(home).getJ(),
-                                        streetBlocks.get(home).getSymbol(), 
-                                        streetBlocks.get(work).getSymbol()) );
+                wasAdded = addNewClient(streetBlocks.get(posibleBlocks.get(home)).getI() - 1, streetBlocks.get(posibleBlocks.get(home)).getJ(), 
+                                        posibleBlocks.get(home),  posibleBlocks.get(work));
+            } while ( home == work && !wasAdded );      
              
         }
         
@@ -155,9 +157,39 @@ public class CityMap {
         return streetBlocks.containsKey(pBlock);
     }
     
+    public int getDefaultTimer() {
+        return defaultTimer;
+    }
+
+    public void setDefaultTimer(int defaultTimer) {
+        this.defaultTimer = defaultTimer;
+    }
+   
+    public Cell[][] getNodeMatrix() {
+        return nodeMatrix;
+    }
     
+    public ArrayList<TaxiCab> getIncialTaxis(){
+        return inicialTaxi;
+    }
+    
+    public ArrayList<Character> getPosibleBlocks() {
+        return posibleBlocks;
+    }
+    
+    public HashMap<Character, Block> getHSBlocks(){
+        return streetBlocks;
+    }
     @Override
     public String toString(){
-        return nonWaiting.toString();
+        String strMap = "";
+        for(int i = 0; i < charMatrix.length; i++){
+            for(int j = 0; j < charMatrix[0].length; j++){ 
+                strMap += charMatrix[i][j];
+            }
+             strMap += '\n';
+        }
+                 
+        return strMap;
     }
 }

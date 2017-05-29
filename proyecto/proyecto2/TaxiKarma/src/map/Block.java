@@ -101,6 +101,10 @@ public class Block {
     
         return false;
     }
+    
+    public int cantPerson(){
+        return people.size();
+    }
 
     @Override
     public String toString(){

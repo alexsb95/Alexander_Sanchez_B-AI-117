@@ -5,32 +5,33 @@
  */
 package fsm;
 
-import entities.Person;
-
 /**
  *
  * @author Alex
  */
-public class Waiting implements State{
+public class Searching implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("wait".equals(pMessage)){
+        if("search".equals(pMessage) && ("Occupied".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()))){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM fsm) { }
+    public void onEnter(FSM pFsm) {
+        //Calculate route to search
+    }
 
     @Override
-    public void onUpdate(FSM fsm) {  }
+    public void onUpdate(FSM pFsm) { }
 
     @Override
-    public void onExit(FSM fsm) { }
+    public void onExit(FSM pFsm) { }
+
     @Override
-    public String getState(){
+    public String getState() {
         return this.getClass().getSimpleName();
     }
     

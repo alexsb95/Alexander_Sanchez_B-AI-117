@@ -25,7 +25,8 @@ public class Person {
     private char home;
     private char currentBlock;
     private char destination;
-    private int timer;
+    private int defaultTimer;
+    private int time;
     private FSM brain;
     private EventEmiter overlord;
     
@@ -37,6 +38,7 @@ public class Person {
         currentBlock = pCurrentBlock;
         overlord = pEmiter;
         setUpStates(pEmiter);
+        defaultTimer = 5; 
     }
     
     public Person (int pI, int pJ){
@@ -92,18 +94,21 @@ public class Person {
     public void setWorkplace(char workplace) {
         this.workplace = workplace;
     }
+    
+     public char getWorkplace() {
+        return this.workplace;
+    }
 
     public void setHome(char home) {
         this.home = home;
     }
     
-    public void setDestination(String pDestination){
-        switch(pDestination){
-            case "goHome":
-                this.destination = this.home;
-            case "goWork":
-                this.destination = this.workplace;
-        }
+    public char getHome() {
+        return this.home;
+    }
+    
+    public void setDestination(char pDestination){
+        this.destination = pDestination;
     }
     
     public char getDestination(){
@@ -115,17 +120,22 @@ public class Person {
     }
     
     public int getTimer() {
-        return timer;
+        return defaultTimer;
     }
 
-    public void setTimer() {
-        this.timer = 5;        
+    public void setTimer(int pAmout) {
+        this.defaultTimer = pAmout;        
+    }
+    
+    public void startTime(){
+        time = defaultTimer;
     }
     
     public void reduceTime(){
-        this.timer--;
-        if(this.timer <= 0){
-            overlord.send("Wait", brain.getId());
+        this.time--;
+        if(this.time <= 0){
+            overlord.send("wait", brain.getId());
+            System.out.println(this.getCurrentState());
         }
     }
     

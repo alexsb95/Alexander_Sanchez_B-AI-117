@@ -21,8 +21,10 @@ public class EventEmiter {
     }
     
     public void update(){
+      
         while(!queue.isEmpty()){
-            queue.pop().getFsm().onMessage(queue.pop().getMessage());
+            Event element = queue.pop();
+            element.getFsm().onMessage(element.getMessage());
         }
     }
     
