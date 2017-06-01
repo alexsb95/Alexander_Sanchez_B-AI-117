@@ -9,6 +9,7 @@ import fsm.EventEmiter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import utils.InputReader;
 
@@ -21,29 +22,31 @@ public class CityMap {
    private InputReader reader;
    public Cell[][] nodeMatrix;
    private char[][] charMatrix;
-   private ArrayList<Person> nonWaiting;
    private HashMap<Character, Block> streetBlocks;
+   private ArrayList<Character> residentBlocks;
    private ArrayList<Character> posibleBlocks;
+   private ArrayList<Character> workBlocks;
    private EventEmiter overlord;
-   private int defaultTimer;
-   private ArrayList<TaxiCab> inicialTaxi;
 
-   public CityMap(EventEmiter pEmiter){
+   private ArrayList<TaxiCab> inicialTaxi;
+   private DayCycle dayCycle;
+
+   public CityMap(EventEmiter pEmiter, int pDayTime, int pPercentageWork ){
        overlord = pEmiter;
-       defaultTimer = 5;
+       dayCycle = new DayCycle(pDayTime, pPercentageWork, overlord);
    }
 
-   public void iniComponents(String pFileName){
+   public void iniComponents(String pMatrixFile, String pBuildingsFile){
        reader = new InputReader();
-       charMatrix = reader.readFile(pFileName);
-       
-       if(charMatrix != null ){
+       charMatrix = reader.readFileMatrix(pMatrixFile);
+       ArrayList<String> stringList = reader.readFileSrings(pBuildingsFile);
+       if(charMatrix != null && !stringList.isEmpty() ){
+            setBuildings(stringList);
             transformMatrix(charMatrix, charMatrix.length, charMatrix[0].length);
        }else{
            System.out.println("Error abriendo archivo");
        }
 
-    
    }
    
    private void transformMatrix(char[][] pMatrix, int pLengthI, int pLenghtJ){
@@ -57,10 +60,9 @@ public class CityMap {
         nodeMatrix = new Cell[pLengthI][pLenghtJ + 1];
         inicialTaxi = new ArrayList<>();
         System.out.println("size "+pLengthI+" "+pLenghtJ);
-        
         ArrayList<Person> clients = new ArrayList<>();
-        posibleBlocks = new ArrayList<>();
         streetBlocks = new HashMap<>();
+        posibleBlocks = new ArrayList<>();
         
          /*      Reas the char matrix and defines the matrixCell, cliennts and blocks        */
         for(int i = 0; i < pLengthI; i++){
@@ -71,7 +73,6 @@ public class CityMap {
                 }else if( Character.toUpperCase(pMatrix[i][j]) >= 'A' && Character.toUpperCase(charMatrix[i][j]) <= 'Z' ){
                     streetBlocks.put(Character.toUpperCase(pMatrix[i][j]), new Block(i,j,Character.toUpperCase(charMatrix[i][j])));      
                     posibleBlocks.add(Character.toUpperCase(pMatrix[i][j]));
-                    
                     nodeMatrix[i][j] = null;
                 }else if( pMatrix[i][j] == '#'){
                     Person client = new Person(i,j);
@@ -98,33 +99,50 @@ public class CityMap {
         }
         
         /*  initialization of the clients   */
-        nonWaiting = new ArrayList<>();
-        setNewClients(clients, posibleBlocks);
+        setNewClients(clients);
    }
    
-   private void setNewClients(ArrayList<Person> pClients, ArrayList<Character> pStreetBlock){
-        
+   private void setNewClients(ArrayList<Person> pClients){   
         Random rnd = new Random();
         int home;
         int work;
-       for(Person cli: pClients){
-            home = rnd.nextInt(pStreetBlock.size() - 1);
+        for(Person cli: pClients){
+            home = rnd.nextInt(residentBlocks.size() - 1);
             do{
-                work = rnd.nextInt(pStreetBlock.size() - 1);
+                work = rnd.nextInt(workBlocks.size() - 1);
             }while(home == work);
             
-            addNewClient(cli.getCurrentI(), cli.getCurrentJ(),pStreetBlock.get(home), pStreetBlock.get(work));
+            addNewClient(cli.getCurrentI(), cli.getCurrentJ(),residentBlocks.get(home), workBlocks.get(work));
         }
                
    }
    
-    public boolean addNewClient(int pI, int pJ, char pOrigin, char pDestiny){
+   private void setBuildings(ArrayList<String> pList){
+       residentBlocks = new ArrayList<>();
+       workBlocks = new ArrayList<>();
+       
+       for(String line : pList){
+           String[] words = line.split("/");
+           if("Residents".equals(words[0])){
+                for(int index = 1 ; index < words.length; index++){
+                    residentBlocks.add(words[index].charAt(0));
+                }
+           }else if("Workplaces".equals(words[0])){
+                for(int index = 1 ; index < words.length; index++){
+                    workBlocks.add(words[index].charAt(0));
+                }        
+           }
+
+       }
+   
+   }
+   
+    public boolean addNewClient(int pI, int pJ, char pHome, char pWork){
         Person client = null;
         /*      Looks for the current block         */
         for (Map.Entry<Character, Block> entry: streetBlocks.entrySet()) {
             if(entry.getValue().isStreet(pI, pJ)){
-                client = new Person(pI, pJ, pOrigin, pDestiny, entry.getKey(), overlord);
-                client.setTimer(defaultTimer);
+                client = new Person(pI, pJ, pWork, pHome, entry.getKey(), overlord, dayCycle);
                 // Adds it to the corresponding block 
                 entry.getValue().newPerson(client);
                 System.out.println(client.toString());
@@ -135,34 +153,49 @@ public class CityMap {
         return false;
     }
     
+    public boolean addNewClient(Person pPerson){
+        streetBlocks.get(pPerson.getCurrentBlock()).newPerson(pPerson);
+        return true;
+    }
+    
     public void addSeveralClients(int pAmount){
         int home, work;
         boolean wasAdded;
         for(int cant=0; cant < pAmount; cant++){
             Random rnd = new Random();
-            work = rnd.nextInt(posibleBlocks.size() - 1);
+            work = rnd.nextInt(workBlocks.size() - 1);
              do {  
-                home = rnd.nextInt(posibleBlocks.size() - 1);
-                wasAdded = addNewClient(streetBlocks.get(posibleBlocks.get(home)).getI() - 1, streetBlocks.get(posibleBlocks.get(home)).getJ(), 
-                                        posibleBlocks.get(home),  posibleBlocks.get(work));
+                home = rnd.nextInt(residentBlocks.size() - 1);
+                wasAdded = addNewClient(streetBlocks.get(residentBlocks.get(home)).getI() - 1, streetBlocks.get(residentBlocks.get(home)).getJ(), 
+                                        residentBlocks.get(home),  workBlocks.get(work));
             } while ( home == work && !wasAdded );      
              
         }
         
     }
     
-    
+    public Person tryToPickUp(int pPosI, int pPosJ){
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            if( pPosI == entry.getValue().getDestI()&&  pPosJ == entry.getValue().getDestJ()){
+                if(entry.getValue().areClientsWaiting()){
+                    return entry.getValue().pickUpClient();
+                }
+            }
+        }
+        
+        return null;
+    }
         
     private boolean validBlock(Character pBlock){
         return streetBlocks.containsKey(pBlock);
     }
     
-    public int getDefaultTimer() {
-        return defaultTimer;
+    public void setDayTime(int pAmount) {
+        dayCycle.setDayUnit(pAmount);
     }
 
-    public void setDefaultTimer(int defaultTimer) {
-        this.defaultTimer = defaultTimer;
+    public void setPercentage(int pPercentage) {
+        dayCycle.setPercentageWork(pPercentage);
     }
    
     public Cell[][] getNodeMatrix() {
@@ -171,6 +204,14 @@ public class CityMap {
     
     public ArrayList<TaxiCab> getIncialTaxis(){
         return inicialTaxi;
+    }
+    
+    public ArrayList<Character> getWorkBlocks() {
+        return workBlocks;
+    }
+    
+    public ArrayList<Character> getResidentBlocks() {
+        return residentBlocks;
     }
     
     public ArrayList<Character> getPosibleBlocks() {
@@ -192,4 +233,6 @@ public class CityMap {
                  
         return strMap;
     }
+    
+
 }

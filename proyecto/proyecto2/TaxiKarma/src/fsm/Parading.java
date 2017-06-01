@@ -5,6 +5,8 @@
  */
 package fsm;
 
+import entities.TaxiCab;
+
 /**
  *
  * @author Alex
@@ -23,7 +25,10 @@ public class Parading implements State{
     public void onEnter(FSM pFsm) { }
 
     @Override
-    public void onUpdate(FSM pFsm) { }
+    public void onUpdate(FSM pFsm) {
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.followRoute();
+    }
 
     @Override
     public void onExit(FSM pFsm) { }

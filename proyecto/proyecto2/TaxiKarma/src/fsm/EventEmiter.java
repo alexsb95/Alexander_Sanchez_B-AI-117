@@ -21,7 +21,6 @@ public class EventEmiter {
     }
     
     public void update(){
-      
         while(!queue.isEmpty()){
             Event element = queue.pop();
             element.getFsm().onMessage(element.getMessage());
@@ -42,13 +41,18 @@ public class EventEmiter {
     }
     
     public void send(String pMessage){
-        for(int index = 0; index < listener.size(); index++){
+        for(int index = 0; index < listener.size(); index++){       
             addToQueue(new Event(listener.get(index), pMessage));
         }
     }
     
     private void addToQueue(Event pEvent){
         queue.add(pEvent);
+    }
+    
+    
+    public ArrayList<FSM> getListener() {
+        return listener;
     }
 }
 
@@ -76,5 +80,6 @@ class Event{
     public void setFsm(FSM fsm) {
         this.fsm = fsm;
     }
+    
     
 }

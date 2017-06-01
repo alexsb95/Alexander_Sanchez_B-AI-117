@@ -42,7 +42,7 @@ public class TaxiCab {
     private AStar algorithm;
     private  LinkedList<Coord> actualRoute;
     private  HashMap<String, Coord> actualRouteHS;
-    private static LinkedList<LinkedList<Coord>> pending;
+    private  LinkedList<LinkedList<Coord>> pending;
     private  LinkedList<HashMap<String, Coord>> pendingHS;
     private  HashMap<String, Coord> pathHS;
 
@@ -70,7 +70,7 @@ public class TaxiCab {
         states.add(new Searching());
         states.add(new Parked());
         
-        State currentState = new Searching();
+        State currentState = new Parked();
         String uniqueID = UUID.randomUUID().toString();
         motor = new FSM(this, states, currentState, uniqueID, pEmiter);
     }
@@ -87,8 +87,38 @@ public class TaxiCab {
             Coord taxiPos = getPosition();
             pathHS.put(taxiPos.toString(), taxiPos);
             moveTaxi(newPos.getI(), newPos.getJ());
-        }else
-            System.out.println("Error: Empty route for taxi " + id);
+        }else if("Searching".equals(getCurrentState())){
+            statusSearch();
+        }else if("Parading".equals(getCurrentState())){
+            if(!pendingHS.isEmpty() && !pending.isEmpty()){
+                loadNewRoute();
+                followRoute();
+            }else{
+                overlord.send("parade", motor.getId());    
+            }
+        }else if("OnRoute".equals(getCurrentState())){
+            map.addNewClient(dropClient());
+            overlord.send("search", motor.getId());
+        }
+        
+    }
+    
+    private void statusSearch(){
+        Person client = map.tryToPickUp(desI, desJ);
+        if(client != null){  
+            pickUpClient(client, map.getHSBlocks().get(client.getDestination()));
+        }else{
+           
+            // intenta de cargar la nueva ruta
+            if(!pendingHS.isEmpty() && !pending.isEmpty()){
+                loadNewRoute();
+                followRoute();
+            }else{
+                System.out.println("PicjUP : " +pendingHS.isEmpty());
+                overlord.send("park", motor.getId());
+                overlord.send("search", motor.getId());
+            }
+        }
     }
     
     public void pickUpClient(Person pClient, Block pBlock){
@@ -96,6 +126,19 @@ public class TaxiCab {
             client = pClient;
             desI = pBlock.getDestI();
             desJ = pBlock.getDestJ();
+            
+            LinkedList<LinkedList<Coord>> pending = new LinkedList<LinkedList<Coord>>();
+            LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<HashMap<String, Coord>>();
+                        
+            LinkedList<Coord> pendQueue =getRoute(getPosition(), new Coord(desI, desJ));
+            HashMap<String, Coord> pendHM = QueueToHM(pendQueue);
+            pending.add(pendQueue);
+            pendingHM.add(pendHM);
+            
+            setPendingHS(pendingHM);
+            setPending(pending);
+        
+            loadNewRoute();
         }
     }
     
@@ -119,7 +162,7 @@ public class TaxiCab {
             
             LinkedList<Coord> pendQueue = getRoute(originPoint, objetivePoint);
             HashMap<String, Coord> pendHM = QueueToHM(pendQueue);
-            pending.add(getRoute(originPoint, objetivePoint));
+            pending.add(pendQueue);
             pendingHM.add(pendHM);
             
             originPoint = objetivePoint;
@@ -152,26 +195,28 @@ public class TaxiCab {
         return routeHM;
     }
     
-    private void loadNewRoute(){
-        actualRouteHS = pendingHS.pop();
-        actualRoute = pending.pop();
-        pathHS.clear();
-        
-        //Eliminate the first elemnet bc is the current one
-        Coord iniPos = actualRoute.pop();
-        pathHS.put(iniPos.toString(), iniPos);
+    private void loadNewRoute(){   
+        if(!pendingHS.isEmpty() && !pending.isEmpty()){
+            actualRouteHS = pendingHS.pop();
+            actualRoute = pending.pop();
+            pathHS.clear();
+
+            //Eliminate the first elemnet bc is the current one
+            Coord iniPos = actualRoute.pop();
+            pathHS.put(iniPos.toString(), iniPos);
+        }
     }
     
     public  Coord getPosition(){
         return new Coord(getCurrentI(), getCurrentJ());
     }
     
-    public static LinkedList<LinkedList<Coord>> getPending() {
+    public LinkedList<LinkedList<Coord>> getPending() {
         return pending;
     }
 
-    public static void setPending(LinkedList<LinkedList<Coord>> pending) {
-        TaxiCab.pending = pending;
+    public void setPending(LinkedList<LinkedList<Coord>> pending) {
+        this.pending = pending;
     }
 
     public HashMap<String, Coord> getActualRouteHS() {
@@ -255,5 +300,9 @@ public class TaxiCab {
         this.algorithm = algorithm;
     }
     
+    @Override
+    public String toString(){
+        return "Pos: " + this.currentI  + "-" + this.currentJ + " Status: " + this.getCurrentState();
+    }
 
 }

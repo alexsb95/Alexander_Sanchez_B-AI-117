@@ -5,6 +5,8 @@
  */
 package fsm;
 
+import entities.TaxiCab;
+
 /**
  *
  * @author Alex
@@ -13,19 +15,24 @@ public class Searching implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("search".equals(pMessage) && ("Occupied".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()))){
+        if("search".equals(pMessage) && ("Occupied".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "Searching".equals(pCurrentState.getState())) ){
             return true;
         }
+
         return false;
     }
 
     @Override
     public void onEnter(FSM pFsm) {
-        //Calculate route to search
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.search();
     }
 
     @Override
-    public void onUpdate(FSM pFsm) { }
+    public void onUpdate(FSM pFsm) {
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.followRoute();
+    }
 
     @Override
     public void onExit(FSM pFsm) { }

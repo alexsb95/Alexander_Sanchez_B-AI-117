@@ -15,7 +15,7 @@ public class Working implements State{
 
     @Override
     public boolean accepts(String pMessage, State currentState) {
-        if("goWork".equals(pMessage) && "Waiting".equals(currentState.getState())){
+        if("gowork".equals(pMessage) && "Waiting".equals(currentState.getState())){
             return true;
         }
         return false;
@@ -24,7 +24,7 @@ public class Working implements State{
     @Override
     public void onEnter(FSM fsm) {
         Person ppl = (Person)fsm.getOwner();
-        ppl.startTime();
+        ppl.setDelay();
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import map.CityMap;
+import map.DayCycle;
 import utils.Coord;
 
 /**
@@ -26,11 +27,11 @@ public class Simulation {
     public ArrayList<TaxiCab> taxiList;
     private CityMap map;
     private AStar algorithm;
-    
-    public Simulation(String pFilename){
-        EventEmiter overlord = new EventEmiter();
-        map = new CityMap(overlord);
-        map.iniComponents(pFilename);
+    private EventEmiter overlord;
+    public Simulation(String pMapFile, String pBuildingFile){
+        overlord = new EventEmiter();
+        map = new CityMap(overlord, 5000, 30);
+        map.iniComponents(pMapFile, pBuildingFile);
         Cell[][] nodes = map.getNodeMatrix();
         algorithm = new AStar(nodes, nodes.length, nodes[0].length);
         initializeTaxis(map, algorithm);
@@ -85,59 +86,42 @@ public class Simulation {
         
         
         cm.addNewClient(18, 18, 'S', 'V');
-        cm.addSeveralClients(3)*/;
+        cm.addSeveralClients(3);*/
         
-        EventEmiter overlord2 = new EventEmiter();
-        Simulation sim = new Simulation("Map.txt");
-        sim.taxiList.get(0).search();
-    }
-    
-    
-    public void search(String pIdTaxi){
-        TaxiCab taxi = taxiList.get(0);
-        ArrayList <Character> blockList = map.getPosibleBlocks();
-        HashMap <Character, Block> blockHM = map.getHSBlocks();
-     
-        LinkedList<LinkedList<Coord>> pending = new LinkedList<LinkedList<Coord>>();
-        LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<HashMap<String, Coord>>();
-        
-        Coord originPoint = taxi.getPosition();
-        for(Character block : blockList){
-            Coord objetivePoint = new Coord(blockHM.get(block).getDestI(), blockHM.get(block).getDestJ());
-            
-            LinkedList<Coord> pendQueue = getRoute(originPoint, objetivePoint);
-            HashMap<String, Coord> pendHM = QueueToHM(pendQueue);
-            pending.add(getRoute(originPoint, objetivePoint));
-            pendingHM.add(pendHM);
-            
-            originPoint = objetivePoint;
-        }
-        
-        taxi.setPendingHS(pendingHM);
-        taxi.setPending(pending);
-        
-        System.out.println(pending.toString());
-    }
-    
-    private LinkedList<Coord> getRoute(Coord pOrigin, Coord pObjetive){
-        LinkedList<Coord> route = new LinkedList<Coord>();
-        ArrayList <Cell> cellList = algorithm.calculatePath(pOrigin.getI(), pOrigin.getJ(), pObjetive.getI(), pObjetive.getJ());
-    
-        for(Cell cell : cellList){
-            Coord coordenates = new Coord(cell.getX(), cell.getY());
-            route.add(coordenates);  
-        }
+       
+        Simulation sim = new Simulation("Map.txt", "Buildings.txt");
+        System.out.println("Listneer: " +sim.getEE().getListener().toString());
+         EventEmiter overlord2 = sim.getEE(); 
+        overlord2.send("search");
+        overlord2.update();
 
-       return route;
-    }
-    
-    private HashMap<String, Coord> QueueToHM(LinkedList<Coord> pQueue){
-        HashMap<String, Coord> routeHM = new HashMap<String, Coord>();
-        for(Coord point: pQueue){
-            routeHM.put(point.toString(), point);
+        System.out.println(sim.taxiList.get(0).getCurrentState());
+       for(int i=0;i<235;i++){
+            //sim.taxiList.get(0).followRoute();
+            overlord2.send("update");
+            overlord2.update();
         }
-        return routeHM;
+        System.out.println(sim.taxiList.get(0).getPosition().toString());
+        System.out.println(sim.taxiList.get(0).getActualRoute().toString());
+        /*
+        DayCycle day = new DayCycle(6,20,overlord2);
+        System.out.println(day.getCurrentState());
+         System.out.println(day.getTimer());
+        overlord2.send("beproductive");
+        overlord2.update();
+        System.out.println(day.getCurrentState());
+        System.out.println(day.getTimer());
+        overlord2.send("update");
+        overlord2.update();
+        System.out.println(day.getCurrentState());
+        System.out.println(day.getTimer());
+        */
+  
     }
     
     public void addTaxi(){}
+    
+    public EventEmiter getEE(){
+        return overlord;
+    }
 }

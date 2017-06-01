@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class InputReader {
     
-    public char[][] readFile(String pFilename){
+    public char[][] readFileMatrix(String pFilename){
         ArrayList<String> tempStr = new ArrayList<>();
         char[][] matrix = null;
         
@@ -38,6 +38,22 @@ public class InputReader {
         }
         
         return matrix;
+    }
+    
+        public ArrayList<String> readFileSrings(String pFilename){
+        ArrayList<String> stringList = new ArrayList<>();
+    
+        try (BufferedReader br = new BufferedReader(new FileReader(pFilename))) {
+            String sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null) {
+                stringList.add(sCurrentLine);
+            }
+            
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+        
+        return stringList;
     }
    
 }

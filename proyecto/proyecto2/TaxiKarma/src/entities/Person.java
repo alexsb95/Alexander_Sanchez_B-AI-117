@@ -12,7 +12,9 @@ import fsm.State;
 import fsm.Waiting;
 import fsm.Working;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
+import map.DayCycle;
 
 /**
  *
@@ -26,11 +28,12 @@ public class Person {
     private char currentBlock;
     private char destination;
     private int defaultTimer;
-    private int time;
+    private int timer;
     private FSM brain;
     private EventEmiter overlord;
+    private DayCycle schedule;
     
-    public Person (int pI, int pJ, char pWorkplace, char pHome, char pCurrentBlock, EventEmiter pEmiter){
+    public Person (int pI, int pJ, char pWorkplace, char pHome, char pCurrentBlock, EventEmiter pEmiter, DayCycle pSchedule){
         currentI = pI;
         currentJ = pJ;
         workplace = pWorkplace;
@@ -38,7 +41,7 @@ public class Person {
         currentBlock = pCurrentBlock;
         overlord = pEmiter;
         setUpStates(pEmiter);
-        defaultTimer = 5; 
+        schedule = pSchedule;
     }
     
     public Person (int pI, int pJ){
@@ -65,7 +68,7 @@ public class Person {
         String uniqueID = UUID.randomUUID().toString();
         brain = new FSM(this, states, currentState, uniqueID, pEmiter);
     }
-
+    
     
     public char getCurrentBlock() {
         return currentBlock;
@@ -127,15 +130,15 @@ public class Person {
         this.defaultTimer = pAmout;        
     }
     
-    public void startTime(){
-        time = defaultTimer;
+    public void setDelay(){
+        Random rnd = new Random();
+        timer = rnd.nextInt((int)(schedule.getProductiveTime()*0.10));
     }
     
     public void reduceTime(){
-        this.time--;
-        if(this.time <= 0){
+        this.timer--;
+        if(this.timer <= 0){
             overlord.send("wait", brain.getId());
-            System.out.println(this.getCurrentState());
         }
     }
     
