@@ -40,12 +40,12 @@ public class DayCycle {
     
     public void beProductive(){
         timer = (int) (dayUnit * (float)(percentageWork /100.0));
-        overlord.send("gowork");
+        overlord.send("getReady");
     }
     
     public void beNonProductive(){
         timer = (int) (dayUnit * (float)((100 - percentageWork) /100.0));
-        overlord.send("gorest");
+        overlord.send("getReady");
     }
     
     public void reduceTime(){

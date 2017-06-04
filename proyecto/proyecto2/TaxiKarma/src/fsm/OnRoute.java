@@ -15,23 +15,26 @@ public class OnRoute implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("pickUp".equals(pMessage) && ("Searching".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState())) ){
+        if("pickup".equals(pMessage) && ("Searching".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState())) ){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM fsm) {
-        TaxiCab cab = (TaxiCab) fsm.getOwner();
-        
+    public void onEnter(FSM pFsm) { }
+
+    @Override
+    public void onUpdate(FSM pFsm) {
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.followRoute();
     }
 
     @Override
-    public void onUpdate(FSM fsm) { }
-
-    @Override
-    public void onExit(FSM fsm) { }
+    public void onExit(FSM pFsm) {
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.dropClient();
+    }
 
     @Override
     public String getState() {

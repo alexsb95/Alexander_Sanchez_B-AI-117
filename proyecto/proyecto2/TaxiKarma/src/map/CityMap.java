@@ -1,7 +1,6 @@
 
 package map;
 
-import algorithm.AStar;
 import algorithm.Cell;
 import entities.Person;
 import entities.TaxiCab;
@@ -26,10 +25,10 @@ public class CityMap {
    private ArrayList<Character> residentBlocks;
    private ArrayList<Character> posibleBlocks;
    private ArrayList<Character> workBlocks;
-   private EventEmiter overlord;
-
+   private final EventEmiter overlord;
+   
    private ArrayList<TaxiCab> inicialTaxi;
-   private DayCycle dayCycle;
+   private final DayCycle dayCycle;
 
    public CityMap(EventEmiter pEmiter, int pDayTime, int pPercentageWork ){
        overlord = pEmiter;
@@ -125,17 +124,33 @@ public class CityMap {
            String[] words = line.split("/");
            if("Residents".equals(words[0])){
                 for(int index = 1 ; index < words.length; index++){
-                    residentBlocks.add(words[index].charAt(0));
+                    residentBlocks.add(Character.toUpperCase(words[index].charAt(0)));
                 }
            }else if("Workplaces".equals(words[0])){
                 for(int index = 1 ; index < words.length; index++){
-                    workBlocks.add(words[index].charAt(0));
+                    workBlocks.add(Character.toUpperCase(words[index].charAt(0)));
                 }        
            }
 
        }
    
    }
+   
+      
+    public boolean addNewClient(char pCurrentBlock, char pHome, char pWork){
+
+        if(streetBlocks.containsKey(pCurrentBlock)){
+            Block block = streetBlocks.get(pCurrentBlock);
+            Person client = new Person(block.getI()-1, block.getJ(), pWork, pHome, pCurrentBlock, overlord, dayCycle);
+            // Adds it to the corresponding block 
+            block.newPerson(client);
+            System.out.println("Added cli: " + client.toString());
+            return true;
+        }
+
+        return false;
+    }
+    
    
     public boolean addNewClient(int pI, int pJ, char pHome, char pWork){
         Person client = null;
@@ -145,7 +160,7 @@ public class CityMap {
                 client = new Person(pI, pJ, pWork, pHome, entry.getKey(), overlord, dayCycle);
                 // Adds it to the corresponding block 
                 entry.getValue().newPerson(client);
-                System.out.println(client.toString());
+                System.out.println("Added cli: " + client.toString());
                 return true;
             }
         }
@@ -154,7 +169,9 @@ public class CityMap {
     }
     
     public boolean addNewClient(Person pPerson){
-        streetBlocks.get(pPerson.getCurrentBlock()).newPerson(pPerson);
+        System.out.println("Added cli: " + pPerson.toString());
+        streetBlocks.get( Character.toUpperCase(pPerson.getCurrentBlock()) ).newPerson(pPerson);
+        //clientList.add(pPerson);
         return true;
     }
     
@@ -185,8 +202,37 @@ public class CityMap {
         
         return null;
     }
+    
+    
+    public ArrayList<Character> getClosetBlocks(int pPosI, int pPosJ){
+        ArrayList<Character> visitedBlocks = new ArrayList<>();
         
-    private boolean validBlock(Character pBlock){
+        Character close = closetBlock(visitedBlocks, pPosI, pPosJ);
+        while(close != null){
+            visitedBlocks.add(close);
+            close = closetBlock(visitedBlocks, streetBlocks.get(close).getDestI(), streetBlocks.get(close).getDestJ() );      
+        }
+        
+        return visitedBlocks;
+    }
+    
+    private Character closetBlock(ArrayList<Character> pVisited, int posI, int posJ){
+        int minDistance = Integer.MAX_VALUE;
+        Character block = null;
+
+        for (Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            int blockDistance = Math.abs(posI - entry.getValue().getDestI()) + Math.abs(posJ - entry.getValue().getDestJ());
+            if((minDistance > blockDistance && !pVisited.contains(entry.getKey())) && blockDistance != 0 ){
+                minDistance = blockDistance;
+                block = entry.getKey();
+            }
+        }
+
+        return block;
+        
+    }
+        
+    public boolean validBlock(Character pBlock){
         return streetBlocks.containsKey(pBlock);
     }
     
@@ -221,6 +267,26 @@ public class CityMap {
     public HashMap<Character, Block> getHSBlocks(){
         return streetBlocks;
     }
+    
+    public char[][] getCharMatrix() {
+        return charMatrix;
+    }
+    
+    public ArrayList<Person> getClientList(){
+        ArrayList<Person> peopleList = new ArrayList<>();
+        
+        for (Map.Entry<Character, Block> entry: streetBlocks.entrySet()) {
+            if(entry.getValue().cantPerson() > 0){
+                
+                ArrayList<Person> clients = entry.getValue().getPeople();
+                clients.forEach((client) -> {
+                    peopleList.add(client);
+                }); 
+            }
+        }
+        return peopleList;
+    }
+        
     @Override
     public String toString(){
         String strMap = "";
@@ -233,6 +299,4 @@ public class CityMap {
                  
         return strMap;
     }
-    
-
 }

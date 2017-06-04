@@ -11,21 +11,26 @@ import entities.Person;
  *
  * @author Alex
  */
-public class Resting implements State{
-
-    @Override
+public class GettingReady implements State{
+     @Override
     public boolean accepts(String pMessage, State currentState) {
-        if("gohome".equals(pMessage) && "Waiting".equals(currentState.getState())){
+        if("getready".equals(pMessage) && ("Working".equals(currentState.getState()) || "Resting".equals(currentState.getState()))){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM fsm) { }
+    public void onEnter(FSM fsm) {
+        Person ppl = (Person)fsm.getOwner();
+        ppl.setDelay();
+    }
 
     @Override
-    public void onUpdate(FSM fsm) {  }
+    public void onUpdate(FSM fsm) { 
+        Person ppl = (Person)fsm.getOwner();
+        ppl.reduceTime();
+    }
 
     @Override
     public void onExit(FSM fsm) {

@@ -105,6 +105,10 @@ public class Block {
     public int cantPerson(){
         return people.size();
     }
+    
+    public ArrayList<Person> getPeople(){
+        return this.people;
+    }
 
     @Override
     public String toString(){

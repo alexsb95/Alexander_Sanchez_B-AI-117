@@ -5,25 +5,41 @@
  */
 package fsm;
 
+import entities.TaxiCab;
+
 /**
  *
  * @author Alex
  */
 public class Parked implements State{
 
+    char objetive;
+    
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("park".equals(pMessage) && !"OnRoute".equals(pCurrentState.getState())){
-            return true;
+        if(pMessage.contains("-") && !"OnRoute".equals(pCurrentState.getState())){
+            String [] splitMessage = pMessage.split("-");
+            if("park".equals(splitMessage[0])){
+                objetive = splitMessage[1].charAt(0);
+                return true;
+            }else{
+                return false;
+            }          
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM pFsm) { }
+    public void onEnter(FSM pFsm) {
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.park(objetive);
+    }
 
     @Override
-    public void onUpdate(FSM pFsm) { }
+    public void onUpdate(FSM pFsm) { 
+        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.followRoute();
+    }
 
     @Override
     public void onExit(FSM pFsm) { }

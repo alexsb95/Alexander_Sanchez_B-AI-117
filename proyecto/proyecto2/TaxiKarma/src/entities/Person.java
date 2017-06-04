@@ -145,10 +145,20 @@ public class Person {
     public String getCurrentState(){
         return brain.getCurrent().getState();
     }
+    
+    public void update(){
+        if(this.currentBlock == this.home){
+            overlord.send("gowork", brain.getId());
+        }else if(this.currentBlock == this.workplace){
+            overlord.send("gohome", brain.getId());
+        }else{
+            overlord.send("wait", brain.getId());
+        }
+    }
             
     @Override
     public String toString(){
-        return currentI + "-" + currentJ+ " crntblock: " + currentBlock + " wrk: " + workplace + " home: " + home;
+        return currentI + "-" + currentJ+ " crntblock: " + currentBlock + " wrk: " + workplace + " home: " + home + " Status: " + getCurrentState();
     }
     
 }

@@ -15,7 +15,8 @@ public class Searching implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("search".equals(pMessage) && ("Occupied".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "Searching".equals(pCurrentState.getState())) ){
+        if("search".equals(pMessage) && 
+           ("Transition".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "OnRoute".equals(pCurrentState.getState())) ){
             return true;
         }
 

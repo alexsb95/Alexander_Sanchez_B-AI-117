@@ -14,11 +14,10 @@ import fsm.Parading;
 import fsm.Parked;
 import fsm.Searching;
 import fsm.State;
+import fsm.Transition;
 import java.util.ArrayList;
-import utils.Coord;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.UUID;
 import map.Block;
 import map.CityMap;
@@ -68,6 +67,7 @@ public class TaxiCab {
         states.add(new OnRoute());
         states.add(new Parading());
         states.add(new Searching());
+        states.add(new Transition());
         states.add(new Parked());
         
         State currentState = new Parked();
@@ -94,28 +94,28 @@ public class TaxiCab {
                 loadNewRoute();
                 followRoute();
             }else{
+                overlord.send("transition", motor.getId());
                 overlord.send("parade", motor.getId());    
             }
         }else if("OnRoute".equals(getCurrentState())){
-            map.addNewClient(dropClient());
             overlord.send("search", motor.getId());
         }
         
     }
     
     private void statusSearch(){
-        Person client = map.tryToPickUp(desI, desJ);
+        Person client = map.tryToPickUp(this.getCurrentI(), this.getCurrentJ());
         if(client != null){  
+            System.out.println("PickUP " + client.toString() +  " -- Dest "+ client.getDestination());
             pickUpClient(client, map.getHSBlocks().get(client.getDestination()));
+            overlord.send("pickup", motor.getId());
         }else{
-           
-            // intenta de cargar la nueva ruta
+              // intenta de cargar la nueva ruta
             if(!pendingHS.isEmpty() && !pending.isEmpty()){
                 loadNewRoute();
                 followRoute();
             }else{
-                System.out.println("PicjUP : " +pendingHS.isEmpty());
-                overlord.send("park", motor.getId());
+                overlord.send("transition", motor.getId());
                 overlord.send("search", motor.getId());
             }
         }
@@ -127,10 +127,45 @@ public class TaxiCab {
             desI = pBlock.getDestI();
             desJ = pBlock.getDestJ();
             
-            LinkedList<LinkedList<Coord>> pending = new LinkedList<LinkedList<Coord>>();
-            LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<HashMap<String, Coord>>();
+            this.loadSingleRoute(desI, desJ);
+        }
+    }
+    
+    public void dropClient(){
+        client.setCurrentI(this.getCurrentI() + 1);
+        client.setCurrentJ(this.getCurrentJ());
+        client.setCurrentBlock(client.getDestination());
+        client.update();
+        map.addNewClient(client);
+        client = null;
+    }
+    
+    public void park(char pDestination){  
+        if(map.validBlock(pDestination)){
+            Block block = map.getHSBlocks().get(pDestination);
+            desI = block.getDestI();
+            desJ = block.getDestJ();
+            this.loadSingleRoute(desI, desJ);    
+        }
+    }
+    
+    public void search(){
+        ArrayList <Character> blockList = map.getClosetBlocks(this.getCurrentI(), this.getCurrentJ());
+        loadMultipleRutes(blockList);
+    }
+    
+    public void parade(){
+        ArrayList <Character> blockList = map.getPosibleBlocks();
+        loadMultipleRutes(blockList);
+        System.out.println("LOAD " + this.pending.toString());
+    }
+    
+    private void loadSingleRoute(int pDestinI, int pDestinJ){
+            
+            LinkedList<LinkedList<Coord>> pending = new LinkedList<>();
+            LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<>();
                         
-            LinkedList<Coord> pendQueue =getRoute(getPosition(), new Coord(desI, desJ));
+            LinkedList<Coord> pendQueue =getRoute(getPosition(), new Coord(pDestinI, pDestinJ));
             HashMap<String, Coord> pendHM = QueueToHM(pendQueue);
             pending.add(pendQueue);
             pendingHM.add(pendHM);
@@ -139,25 +174,17 @@ public class TaxiCab {
             setPending(pending);
         
             loadNewRoute();
-        }
     }
     
-    public Person dropClient(){
-        Person temp = client;
-        client = null;
-        return temp;
-    }
-    
-    public void search(){
-        ArrayList <Character> blockList = map.getPosibleBlocks();
+    private void loadMultipleRutes(ArrayList <Character> pBlockList){;
         HashMap <Character, Block> blockHM = map.getHSBlocks();
      
-        LinkedList<LinkedList<Coord>> pending = new LinkedList<LinkedList<Coord>>();
-        LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<HashMap<String, Coord>>();
+        LinkedList<LinkedList<Coord>> pending = new LinkedList<>();
+        LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<>();
         
         Coord originPoint = getPosition();
         
-        for(Character block : blockList){
+        for(Character block : pBlockList){
             Coord objetivePoint = new Coord(blockHM.get(block).getDestI(), blockHM.get(block).getDestJ());
             
             LinkedList<Coord> pendQueue = getRoute(originPoint, objetivePoint);
@@ -172,11 +199,11 @@ public class TaxiCab {
         setPending(pending);
         
         loadNewRoute();
-        System.out.println(pending.toString());
+    
     }
     
     private LinkedList<Coord> getRoute(Coord pOrigin, Coord pObjetive){
-        LinkedList<Coord> route = new LinkedList<Coord>();
+        LinkedList<Coord> route = new LinkedList<>();
         ArrayList <Cell> cellList = algorithm.calculatePath(pOrigin.getI(), pOrigin.getJ(), pObjetive.getI(), pObjetive.getJ());
     
         for(Cell cell : cellList){
@@ -188,7 +215,7 @@ public class TaxiCab {
     }
     
     private HashMap<String, Coord> QueueToHM(LinkedList<Coord> pQueue){
-        HashMap<String, Coord> routeHM = new HashMap<String, Coord>();
+        HashMap<String, Coord> routeHM = new HashMap<>();
         for(Coord point: pQueue){
             routeHM.put(point.toString(), point);
         }
@@ -300,9 +327,17 @@ public class TaxiCab {
         this.algorithm = algorithm;
     }
     
+    public Person getClient() {
+        return client;
+    }
+
+    public void setClient(Person client) {
+        this.client = client;
+    }
+    
     @Override
     public String toString(){
-        return "Pos: " + this.currentI  + "-" + this.currentJ + " Status: " + this.getCurrentState();
+        return "ID: " + id +  " Pos: " + this.currentI  + "-" + this.currentJ + " Status: " + this.getCurrentState();
     }
 
 }

@@ -22,16 +22,10 @@ public class Working implements State{
     }
 
     @Override
-    public void onEnter(FSM fsm) {
-        Person ppl = (Person)fsm.getOwner();
-        ppl.setDelay();
-    }
+    public void onEnter(FSM fsm) {    }
 
     @Override
-    public void onUpdate(FSM fsm) { 
-        Person ppl = (Person)fsm.getOwner();
-        ppl.reduceTime();
-    }
+    public void onUpdate(FSM fsm) {  }
 
     @Override
     public void onExit(FSM fsm) {

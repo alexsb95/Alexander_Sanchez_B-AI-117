@@ -15,14 +15,19 @@ public class Parading implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("parade".equals(pMessage) && ("Occupied".equals(pCurrentState.getState()) || "Searching".equals(pCurrentState.getState()))){
+
+        if("parade".equals(pMessage) && 
+            ("Transition".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "Searching".equals(pCurrentState.getState()) || "OnRoute".equals(pCurrentState.getState()) )){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM pFsm) { }
+    public void onEnter(FSM pFsm) {
+       TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.parade();
+    }
 
     @Override
     public void onUpdate(FSM pFsm) {
