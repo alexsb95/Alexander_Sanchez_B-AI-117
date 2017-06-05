@@ -236,6 +236,11 @@ public class CityMap {
         return streetBlocks.containsKey(pBlock);
     }
     
+    public void createTrafficJam(){
+    //Un radio de 7 blocks de cercania i o j se considera denttro de un mismo sector
+    
+    }
+    
     public void setDayTime(int pAmount) {
         dayCycle.setDayUnit(pAmount);
     }
@@ -270,6 +275,10 @@ public class CityMap {
     
     public char[][] getCharMatrix() {
         return charMatrix;
+    }
+    
+    public int getTime(){
+        return this.dayCycle.getClock();
     }
     
     public ArrayList<Person> getClientList(){

@@ -11,6 +11,8 @@ public class Cell {
 	private Cell pathParent;
 	private int costFromStart;
 	private int estimatedCostToGoal;
+        private int weight;
+
         
         public Cell(int pX, int pY){
             x = pX;
@@ -59,14 +61,22 @@ public class Cell {
 		    return (v>0)?1:(v<0)?-1:0; // sign function
 	}
 	
-	  public int getCost() {
+	public int getCost() {
 	    return costFromStart + estimatedCostToGoal;
-	  }
+	}
 
 	  
-	  public int getEstimatedCost(Cell pObjetive){
-		  return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
-	  }
+        public int getEstimatedCost(Cell pObjetive){
+            return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
 	  
 	  @Override
 	  public String toString(){

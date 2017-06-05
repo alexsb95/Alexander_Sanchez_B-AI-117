@@ -41,7 +41,7 @@ public class Simulation {
         initializeTaxis(map, algorithm);
     }
     
-    public void initializeTaxis(CityMap pMap, AStar pAlgorithm){
+    private void initializeTaxis(CityMap pMap, AStar pAlgorithm){
         ArrayList<TaxiCab> taxis = map.getIncialTaxis();
         for(TaxiCab taxi : taxis){
             taxi.setMap(map);
@@ -99,7 +99,6 @@ public class Simulation {
         overlord2.send("search");
         overlord2.update();
 
-
         System.out.println(sim.taxiList.get(0).getCurrentState());
         
         for(int i=0;i<150;i++){
@@ -111,6 +110,8 @@ public class Simulation {
         System.out.println(sim.taxiList.get(1).toString());
         
         System.out.println(sim.createMap());
+        
+        System.out.println(sim.getTime());
         /*
         DayCycle day = new DayCycle(6,20,overlord2);
         System.out.println(day.getCurrentState());
@@ -235,5 +236,9 @@ public class Simulation {
         }else{
             pathOn = true;
         }
+    }
+    
+    public int getTime(){
+        return map.getTime();
     }
 }

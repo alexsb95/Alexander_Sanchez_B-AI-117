@@ -16,6 +16,7 @@ import java.util.UUID;
  */
 public class DayCycle {
     private int dayUnit;
+    private int clock;
     private int percentageWork;
     private int timer;
     private FSM circadian;
@@ -23,6 +24,7 @@ public class DayCycle {
     
     public DayCycle(int pDayUnit, int pPercentageWork, EventEmiter pOverlord){
         dayUnit = pDayUnit;
+        clock = 0;
         percentageWork = pPercentageWork;
         overlord = pOverlord;
         setUpStates(pOverlord);
@@ -49,6 +51,7 @@ public class DayCycle {
     }
     
     public void reduceTime(){
+        clock++;
         timer--;
         if(timer <= 0){
             
@@ -61,6 +64,10 @@ public class DayCycle {
                     overlord.send("beproductive", circadian.getId());
                     break;
             }
+        }
+        
+        if(clock >= dayUnit){
+            clock = 0;
         }
     }
     
@@ -86,6 +93,10 @@ public class DayCycle {
     
     public int getTimer() {
         return timer;
+    }
+    
+    public int getClock(){
+        return clock;
     }
     
     public int getPercentageWork() {
