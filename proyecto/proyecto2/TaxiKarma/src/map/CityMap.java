@@ -1,6 +1,7 @@
 
 package map;
 
+import algorithm.AStar;
 import algorithm.Cell;
 import entities.Person;
 import entities.TaxiCab;
@@ -19,7 +20,7 @@ import utils.InputReader;
 public class CityMap {
     
    private InputReader reader;
-   public Cell[][] nodeMatrix;
+   private Cell[][] nodeMatrix;
    private char[][] charMatrix;
    private HashMap<Character, Block> streetBlocks;
    private ArrayList<Character> residentBlocks;
@@ -29,10 +30,14 @@ public class CityMap {
    
    private ArrayList<TaxiCab> inicialTaxi;
    private final DayCycle dayCycle;
+   public ArrayList<TaxiCab> taxiList;
+   private AStar algorithm;
+   private ArrayList<StreetSection> section;
 
    public CityMap(EventEmiter pEmiter, int pDayTime, int pPercentageWork ){
        overlord = pEmiter;
        dayCycle = new DayCycle(pDayTime, pPercentageWork, overlord);
+
    }
 
    public void iniComponents(String pMatrixFile, String pBuildingsFile){
@@ -42,6 +47,8 @@ public class CityMap {
        if(charMatrix != null && !stringList.isEmpty() ){
             setBuildings(stringList);
             transformMatrix(charMatrix, charMatrix.length, charMatrix[0].length);
+            algorithm = new AStar(nodeMatrix, nodeMatrix.length, nodeMatrix[0].length);
+            initializeTaxis(algorithm);
        }else{
            System.out.println("Error abriendo archivo");
        }
@@ -93,8 +100,7 @@ public class CityMap {
                     nodeMatrix[i][j] = null; 
                 }
                                
-            }
-            
+            }    
         }
         
         /*  initialization of the clients   */
@@ -236,9 +242,61 @@ public class CityMap {
         return streetBlocks.containsKey(pBlock);
     }
     
+    public void defineSection(){
+        section = new ArrayList<>();
+        int lengthI = nodeMatrix.length;
+        int lenghtJ = nodeMatrix[0].length;
+        
+        HashMap<String, Double> str = new HashMap<>();
+        
+        for(int i = 0; i < lengthI; i++){  
+            for(int j = 0; j < lenghtJ; j++){       
+                double stress = 0.0;
+                str.put(i+"-"+j, stress);
+                if(this.nodeMatrix[i][j] == null){                    
+                    if(str.size() >= 4){            
+                        section.add(new StreetSection(str, overlord));
+                        str = new HashMap<>();
+                    }else{
+                        str.clear();
+                    }
+                }
+                   
+            }    
+        }
+        
+        str = new HashMap<>();
+        for(int j = 0; j < lenghtJ; j++){  
+            for(int i = 0; i < lengthI; i++){
+                double stress = 0.0;
+                str.put(i+"-"+j, stress);
+                if(this.nodeMatrix[i][j] == null){
+                    if(str.size() >= 4){
+                        section.add(new StreetSection(str, overlord));
+                        str = new HashMap<>();
+                    }else{
+                        str.clear();
+                    }
+                }
+                   
+            }    
+        }
+        
+        System.out.println(section.toString());
+    
+    }
+    
     public void createTrafficJam(){
     //Un radio de 7 blocks de cercania i o j se considera denttro de un mismo sector
     
+        for(int outTaxi = 0; outTaxi < taxiList.size(); outTaxi++){
+            for(int inTaxi = outTaxi; inTaxi < taxiList.size(); inTaxi++){
+                if( Math.abs(taxiList.get(inTaxi).getCurrentI() - taxiList.get(outTaxi).getCurrentI()) <= 4 || 
+                        Math.abs(taxiList.get(inTaxi).getCurrentJ() - taxiList.get(outTaxi).getCurrentJ()) <= 4 ){
+                       
+                }
+            }
+        }
     }
     
     public void setDayTime(int pAmount) {
@@ -279,6 +337,26 @@ public class CityMap {
     
     public int getTime(){
         return this.dayCycle.getClock();
+    }
+    
+    private void initializeTaxis(AStar pAlgorithm){
+        ArrayList<TaxiCab> taxis = this.getIncialTaxis();
+        for(TaxiCab taxi : taxis){
+            taxi.setMap(this);
+            taxi.setAlgorithm(pAlgorithm);
+        }
+        taxiList = taxis;
+    }
+    
+    public void addTaxi(){
+        TaxiCab newTaxi = new TaxiCab(overlord);
+        newTaxi.setAlgorithm(algorithm);
+        newTaxi.setMap(this);
+        taxiList.add(newTaxi);
+    }
+    
+    public ArrayList<TaxiCab> getTaxiList(){
+        return taxiList;
     }
     
     public ArrayList<Person> getClientList(){

@@ -25,9 +25,8 @@ import utils.Coord;
  * @author Alex
  */
 public class Simulation {
-    public ArrayList<TaxiCab> taxiList;
-    private CityMap map;
-    private AStar algorithm;
+
+    public CityMap map;
     private EventEmiter overlord;
     private boolean pathOn;
     private boolean routeOn;
@@ -36,19 +35,9 @@ public class Simulation {
         overlord = new EventEmiter();
         map = new CityMap(overlord, 5000, 30);
         map.iniComponents(pMapFile, pBuildingFile);
-        Cell[][] nodes = map.getNodeMatrix();
-        algorithm = new AStar(nodes, nodes.length, nodes[0].length);
-        initializeTaxis(map, algorithm);
     }
     
-    private void initializeTaxis(CityMap pMap, AStar pAlgorithm){
-        ArrayList<TaxiCab> taxis = map.getIncialTaxis();
-        for(TaxiCab taxi : taxis){
-            taxi.setMap(map);
-            taxi.setAlgorithm(pAlgorithm);
-        }
-        taxiList = taxis;
-    }
+
     /**
      * @param args the command line arguments
      */
@@ -98,20 +87,18 @@ public class Simulation {
         System.out.println(sim.createMap());
         overlord2.send("search");
         overlord2.update();
-
-        System.out.println(sim.taxiList.get(0).getCurrentState());
         
         for(int i=0;i<150;i++){
             //sim.taxiList.get(0).followRoute();
             overlord2.send("update");
             overlord2.update();
         }
-        System.out.println(sim.taxiList.get(0).toString());
-        System.out.println(sim.taxiList.get(1).toString());
         
         System.out.println(sim.createMap());
         
         System.out.println(sim.getTime());
+        
+        sim.map.defineSection();
         /*
         DayCycle day = new DayCycle(6,20,overlord2);
         System.out.println(day.getCurrentState());
@@ -128,13 +115,7 @@ public class Simulation {
   
     }
     
-    public void addTaxi(){
-        TaxiCab newTaxi = new TaxiCab(overlord);
-        newTaxi.setAlgorithm(algorithm);
-        newTaxi.setMap(map);
-        taxiList.add(newTaxi);
-    }
-    
+
     public EventEmiter getEE(){
         return overlord;
     }
@@ -150,9 +131,9 @@ public class Simulation {
         int jLen = cityMap[0].length;
         
         HashMap<String,Person> clientListHM = TransClientHM(map.getClientList());
-        HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(taxiList);
-        HashMap<String,Coord> pathHM = getPaths(taxiList);
-        HashMap<String,Coord> routeHM = getRoutes(taxiList);
+        HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
+        HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
+        HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
         
         System.out.println("Client list: "+clientListHM.toString());
         System.out.println("Path: " + pathHM.toString());
