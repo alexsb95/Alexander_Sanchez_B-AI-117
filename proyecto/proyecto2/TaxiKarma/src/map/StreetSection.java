@@ -1,6 +1,7 @@
 
 package map;
 
+import algorithm.Cell;
 import entities.TaxiCab;
 import fsm.Decreasing;
 import fsm.EventEmiter;
@@ -18,14 +19,14 @@ import java.util.UUID;
  * @author Alex
  */
 public class StreetSection {
-    private HashMap<String, Double> street;
+    private HashMap<String, Cell> street;
     private double stress;
     private HashMap<String, TaxiCab> taxisRecord;
     private HashMap<String, TaxiCab> taxisActual;
     private double cost;
     private FSM vigilante;
     
-    public StreetSection(HashMap<String, Double> pStreet, EventEmiter pEmiter){
+    public StreetSection(HashMap<String, Cell> pStreet, EventEmiter pEmiter){
         street = pStreet;
         stress = 0;
         taxisRecord = new HashMap<>();
@@ -45,11 +46,11 @@ public class StreetSection {
         vigilante = new FSM(this, states, currentState, uniqueID, pEmiter);
     }
 
-    public HashMap<String, Double> getStreet() {
+    public HashMap<String, Cell> getStreet() {
         return street;
     }
 
-    public void setStreet(HashMap<String, Double> street) {
+    public void setStreet(HashMap<String, Cell> street) {
         this.street = street;
     }
 
@@ -60,8 +61,8 @@ public class StreetSection {
     public void setStress(double stress) {
         this.stress = stress;
         
-        for (Map.Entry<String, Double> entry: street.entrySet()) {
-            entry.setValue(stress);
+        for (Map.Entry<String, Cell> entry: street.entrySet()) {
+            entry.getValue().changeWeight(stress);
         }
     }
 
@@ -83,7 +84,8 @@ public class StreetSection {
         if(this.stress >= 0.1){
             setStress(this.stress - 0.1);
         }else{
-            this.stress = 0;
+            this.taxisRecord.clear();
+            setStress(0);
         }   
     }
     

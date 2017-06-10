@@ -11,7 +11,7 @@ public class Cell {
 	private Cell pathParent;
 	private int costFromStart;
 	private int estimatedCostToGoal;
-        private int weight;
+        private double weight;
 
         
         public Cell(int pX, int pY){
@@ -70,12 +70,16 @@ public class Cell {
             return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
         }
 
-        public int getWeight() {
+        public double getWeight() {
             return weight;
         }
 
-        public void setWeight(int weight) {
+        public void setWeight(double weight) {
             this.weight = weight;
+        }
+        
+        public void changeWeight(double weight) {
+            this.weight += weight;
         }
 	  
 	  @Override

@@ -16,20 +16,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import map.CityMap;
 import map.DayCycle;
+import ui.MainWindow;
 import utils.Coord;
 
 /**
  *
  * @author Alex
  */
-public class Simulation {
+public class Simulation extends Thread {
 
     public CityMap map;
     private EventEmiter overlord;
     private boolean pathOn;
     private boolean routeOn;
+    private int daemon;
     
     public Simulation(String pMapFile, String pBuildingFile){
         overlord = new EventEmiter();
@@ -37,7 +41,20 @@ public class Simulation {
         map.iniComponents(pMapFile, pBuildingFile);
     }
     
+    public Simulation(){
+        overlord = new EventEmiter();
+    }
+    
+    public void setDayCycle(int pDayDuration, int pWorkPercentage){
+        map = new CityMap(overlord, pDayDuration, pWorkPercentage);
+    }
 
+    public void setFiles(String pMapFile, String pBuildingFile){
+        map.iniComponents(pMapFile, pBuildingFile);
+    }
+
+        
+        
     /**
      * @param args the command line arguments
      */
@@ -93,10 +110,12 @@ public class Simulation {
             overlord2.send("update");
             overlord2.update();
         }
-        
+                sim.addClient(5);
         System.out.println(sim.createMap());
         
         System.out.println(sim.getTime());
+        
+
         
         sim.map.defineSection();
         /*
@@ -121,9 +140,7 @@ public class Simulation {
     }
     
     public String createMap(){
-        pathOn = true;
-        routeOn = true;
-        
+
         String strMap = "";
         
         char[][] cityMap = map.getCharMatrix();
@@ -134,10 +151,10 @@ public class Simulation {
         HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
         HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
         HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
-        
-        System.out.println("Client list: "+clientListHM.toString());
-        System.out.println("Path: " + pathHM.toString());
-        System.out.println("Route: " + routeHM.toString());
+        System.out.println("Client list: "+clientListHM.size());
+        //System.out.println("Client list: "+clientListHM.toString());
+        //System.out.println("Path: " + pathHM.toString());
+        //System.out.println("Route: " + routeHM.toString());
         
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){
@@ -222,4 +239,65 @@ public class Simulation {
     public int getTime(){
         return map.getTime();
     }
+    
+    public void addTaxi(){
+        map.addTaxi();
+    }
+    
+    public void addClient(char pCurret, char pHome, char pWork){
+        map.addNewClient(pCurret, pHome, pWork);
+    }
+    
+     public void addClient(int pCant){
+        map.addSeveralClients(pCant);
+    }   
+
+    public boolean isPathOn() {
+        return pathOn;
+    }
+
+    public boolean isRouteOn() {
+        return routeOn;
+    }
+
+    public int getDaemon() {
+        return daemon;
+    }
+
+    public void setDaemon(int daemon) {
+        this.daemon = daemon;
+    }
+    
+    
+    public void animate(){
+        while(true){
+            if(getDaemon() > 0){
+                System.out.println("Hola");
+                overlord.send("update");
+                overlord.update();
+                String strMap = createMap();
+                System.out.println(strMap);
+                //MainWindow.upadateMap(strMap);
+                try {
+                    Thread.currentThread().sleep(getDaemon());
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                try {
+                    Thread.currentThread().sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Simulation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+
+        }
+    }
+    
+    @Override
+    public void run() {
+        animate();
+    }
+
 }

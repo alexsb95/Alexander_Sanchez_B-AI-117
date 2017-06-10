@@ -189,10 +189,9 @@ public class CityMap {
             work = rnd.nextInt(workBlocks.size() - 1);
              do {  
                 home = rnd.nextInt(residentBlocks.size() - 1);
-                wasAdded = addNewClient(streetBlocks.get(residentBlocks.get(home)).getI() - 1, streetBlocks.get(residentBlocks.get(home)).getJ(), 
+            } while ( home == work );      
+                             wasAdded = addNewClient(streetBlocks.get(residentBlocks.get(home)).getI() - 1, streetBlocks.get(residentBlocks.get(home)).getJ(), 
                                         residentBlocks.get(home),  workBlocks.get(work));
-            } while ( home == work && !wasAdded );      
-             
         }
         
     }
@@ -247,36 +246,36 @@ public class CityMap {
         int lengthI = nodeMatrix.length;
         int lenghtJ = nodeMatrix[0].length;
         
-        HashMap<String, Double> str = new HashMap<>();
+        HashMap<String, Cell> tempStreet = new HashMap<>();
         
         for(int i = 0; i < lengthI; i++){  
-            for(int j = 0; j < lenghtJ; j++){       
-                double stress = 0.0;
-                str.put(i+"-"+j, stress);
+            for(int j = 0; j < lenghtJ; j++){        
                 if(this.nodeMatrix[i][j] == null){                    
-                    if(str.size() >= 4){            
-                        section.add(new StreetSection(str, overlord));
-                        str = new HashMap<>();
+                    if(tempStreet.size() >= 4){            
+                        section.add(new StreetSection(tempStreet, overlord));
+                        tempStreet = new HashMap<>();
                     }else{
-                        str.clear();
+                        tempStreet.clear();
                     }
+                }else{
+                    tempStreet.put(i+"-"+j, this.nodeMatrix[i][j]);
                 }
                    
             }    
         }
         
-        str = new HashMap<>();
+        tempStreet = new HashMap<>();
         for(int j = 0; j < lenghtJ; j++){  
             for(int i = 0; i < lengthI; i++){
-                double stress = 0.0;
-                str.put(i+"-"+j, stress);
                 if(this.nodeMatrix[i][j] == null){
-                    if(str.size() >= 4){
-                        section.add(new StreetSection(str, overlord));
-                        str = new HashMap<>();
+                    if(tempStreet.size() >= 4){
+                        section.add(new StreetSection(tempStreet, overlord));
+                        tempStreet = new HashMap<>();
                     }else{
-                        str.clear();
+                        tempStreet.clear();
                     }
+                }else{
+                    tempStreet.put(i+"-"+j, this.nodeMatrix[i][j]);
                 }
                    
             }    
