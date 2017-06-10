@@ -79,6 +79,7 @@ public class TaxiCab {
     }
     
     public void followRoute(){
+        map.removeTaxiPos(this);
         if(!actualRoute.isEmpty()){
             Coord newPos = actualRoute.pop();
             Coord taxiPos = getPosition();
@@ -97,7 +98,7 @@ public class TaxiCab {
         }else if("OnRoute".equals(getCurrentState())){
             overlord.send("search", motor.getId());
         }
-        
+        map.addTaxiPos(this);
     }
     
     private void statusSearch(){

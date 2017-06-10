@@ -6,7 +6,9 @@
 package utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -15,7 +17,7 @@ import java.util.ArrayList;
  *
  * @author Alex
  */
-public class InputReader {
+public class FileManager {
     
     public char[][] readFileMatrix(String pFilename){
         ArrayList<String> tempStr = new ArrayList<>();
@@ -40,7 +42,7 @@ public class InputReader {
         return matrix;
     }
     
-        public ArrayList<String> readFileSrings(String pFilename){
+    public ArrayList<String> readFileSrings(String pFilename){
         ArrayList<String> stringList = new ArrayList<>();
     
         try (BufferedReader br = new BufferedReader(new FileReader(pFilename))) {
@@ -54,6 +56,26 @@ public class InputReader {
         }
         
         return stringList;
+    }
+    
+    public void createFile(String pFileName, String pContent){
+    
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(pFileName))) {
+                bw.write(pContent);
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+    
+    }
+    
+    public void appendFile(String pFileName, String pContent){
+    
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(pFileName, true))) {
+                bw.write(pContent);
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+    
     }
    
 }

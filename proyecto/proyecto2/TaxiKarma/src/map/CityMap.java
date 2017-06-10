@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import utils.InputReader;
+import utils.FileManager;
 
 /**
  *
@@ -19,7 +19,7 @@ import utils.InputReader;
  */
 public class CityMap {
     
-   private InputReader reader;
+   private FileManager fileHandler;
    private Cell[][] nodeMatrix;
    private char[][] charMatrix;
    private HashMap<Character, Block> streetBlocks;
@@ -37,18 +37,19 @@ public class CityMap {
    public CityMap(EventEmiter pEmiter, int pDayTime, int pPercentageWork ){
        overlord = pEmiter;
        dayCycle = new DayCycle(pDayTime, pPercentageWork, overlord);
-
+       
    }
 
    public void iniComponents(String pMatrixFile, String pBuildingsFile){
-       reader = new InputReader();
-       charMatrix = reader.readFileMatrix(pMatrixFile);
-       ArrayList<String> stringList = reader.readFileSrings(pBuildingsFile);
+       fileHandler = new FileManager();
+       charMatrix = fileHandler.readFileMatrix(pMatrixFile);
+       ArrayList<String> stringList = fileHandler.readFileSrings(pBuildingsFile);
        if(charMatrix != null && !stringList.isEmpty() ){
             setBuildings(stringList);
             transformMatrix(charMatrix, charMatrix.length, charMatrix[0].length);
             algorithm = new AStar(nodeMatrix, nodeMatrix.length, nodeMatrix[0].length);
             initializeTaxis(algorithm);
+            defineSection();
        }else{
            System.out.println("Error abriendo archivo");
        }
@@ -280,9 +281,7 @@ public class CityMap {
                    
             }    
         }
-        
-        System.out.println(section.toString());
-    
+            
     }
     
     public void createTrafficJam(){
@@ -373,6 +372,23 @@ public class CityMap {
         return peopleList;
     }
         
+    public void addTaxiPos(TaxiCab pTaxi){
+        for(StreetSection street : section){
+            if(street.isStreet(pTaxi.getPosition().toString())){
+                street.addTaxi(pTaxi);
+            }
+        }
+    }
+    
+    public void removeTaxiPos(TaxiCab pTaxi){
+        for(StreetSection street : section){
+            if(street.isStreet(pTaxi.getPosition().toString())){
+                street.removeTaxi(pTaxi);
+            }
+        }
+    }
+    
+    
     @Override
     public String toString(){
         String strMap = "";

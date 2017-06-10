@@ -25,6 +25,7 @@ public class StreetSection {
     private HashMap<String, TaxiCab> taxisActual;
     private double cost;
     private FSM vigilante;
+    private EventEmiter overlord;
     
     public StreetSection(HashMap<String, Cell> pStreet, EventEmiter pEmiter){
         street = pStreet;
@@ -44,6 +45,7 @@ public class StreetSection {
         State currentState = new Keeping();
         String uniqueID = UUID.randomUUID().toString();
         vigilante = new FSM(this, states, currentState, uniqueID, pEmiter);
+        overlord = pEmiter;
     }
 
     public HashMap<String, Cell> getStreet() {
@@ -68,12 +70,20 @@ public class StreetSection {
 
 
     public void addTaxi(TaxiCab pTaxi) {
+        if(taxisRecord.containsKey(pTaxi.getId())){
+            increasing();
+        }
         this.taxisActual.put(pTaxi.getId(), pTaxi);
-        this.taxisRecord.put(pTaxi.getId(), pTaxi);   
+        this.taxisRecord.put(pTaxi.getId(), pTaxi);
+
+        
     }
     
     public void removeTaxi(TaxiCab pTaxi){
         this.taxisActual.remove(pTaxi.getId());
+        if(this.taxisActual.isEmpty()){
+            this.overlord.send("decrease", vigilante.getId());
+        }
     }
     
     public void increasing(){
@@ -86,11 +96,24 @@ public class StreetSection {
         }else{
             this.taxisRecord.clear();
             setStress(0);
+            this.overlord.send("keep", vigilante.getId());
         }   
     }
     
     public boolean areTaxis(){
         return !taxisActual.isEmpty();
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+    
+    public boolean isStreet(String pKey){
+        return street.containsKey(pKey);
     }
     
     

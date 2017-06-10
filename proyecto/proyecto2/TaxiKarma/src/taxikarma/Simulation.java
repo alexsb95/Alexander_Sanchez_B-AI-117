@@ -8,7 +8,7 @@ package taxikarma;
 import algorithm.AStar;
 import algorithm.Cell;
 import map.Block;
-import utils.InputReader;
+import utils.FileManager;
 import entities.Person;
 import entities.TaxiCab;
 import fsm.EventEmiter;
@@ -34,15 +34,21 @@ public class Simulation extends Thread {
     private boolean pathOn;
     private boolean routeOn;
     private int daemon;
+    private FileManager fileHandler;
+    private final String FILENAME = "TrafficJam.txt";
     
     public Simulation(String pMapFile, String pBuildingFile){
         overlord = new EventEmiter();
         map = new CityMap(overlord, 5000, 30);
         map.iniComponents(pMapFile, pBuildingFile);
+        fileHandler = new FileManager();
+        fileHandler.createFile(FILENAME, "Archivo contiene el congestionamiento\n");
     }
     
     public Simulation(){
         overlord = new EventEmiter();
+        fileHandler = new FileManager();
+        fileHandler.createFile(FILENAME, "Archivo contiene el congestionamiento\n");
     }
     
     public void setDayCycle(int pDayDuration, int pWorkPercentage){
@@ -105,19 +111,18 @@ public class Simulation extends Thread {
         overlord2.send("search");
         overlord2.update();
         
-        for(int i=0;i<150;i++){
+        for(int i=0;i<20;i++){
             //sim.taxiList.get(0).followRoute();
             overlord2.send("update");
             overlord2.update();
+            sim.writeTrafficFile();
         }
-                sim.addClient(5);
+
         System.out.println(sim.createMap());
         
         System.out.println(sim.getTime());
         
 
-        
-        sim.map.defineSection();
         /*
         DayCycle day = new DayCycle(6,20,overlord2);
         System.out.println(day.getCurrentState());
@@ -132,6 +137,9 @@ public class Simulation extends Thread {
         System.out.println(day.getTimer());
         */
   
+        FileManager fM = new FileManager();
+        fM.appendFile("Prueba.txt", "Hola");
+        
     }
     
 
@@ -180,6 +188,51 @@ public class Simulation extends Thread {
         return strMap;
     }
     
+    public String createMapUI(){
+
+        String strMap = "";
+        
+        char[][] cityMap = map.getCharMatrix();
+        int iLen = cityMap.length;
+        int jLen = cityMap[0].length;
+        
+        HashMap<String,Person> clientListHM = TransClientHM(map.getClientList());
+        HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
+        HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
+        HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
+        System.out.println("Client list: "+clientListHM.size());
+        //System.out.println("Client list: "+clientListHM.toString());
+        //System.out.println("Path: " + pathHM.toString());
+        //System.out.println("Route: " + routeHM.toString());
+        
+        for(int i = 0; i < iLen; i++){
+            for(int j = 0; j < jLen; j++){
+                //Print the taxi
+                strMap +=  ' ';
+                if(taxiListHM.containsKey(i+"-"+j)){
+                    strMap +=  '@';
+                }//Print the path
+                else if(pathOn && pathHM.containsKey(i + "-" + j)){
+                    strMap +=  '*';
+                }//Print the route
+                else if(routeOn && routeHM.containsKey(i + "-" + j)){
+                     strMap +=  '+';
+                }else if (clientListHM.containsKey(i + "-" + j)){
+                    strMap += 'o';
+                }else{  
+                    if(cityMap[i][j] == ' '){
+                        strMap +=  "   ";
+                    }else
+                        strMap +=  cityMap[i][j];
+                }
+                strMap +=  ' ';
+            }
+           strMap += '\n';
+        }
+        
+        return strMap;
+    }
+    
     private HashMap<String,Person> TransClientHM(ArrayList<Person> pClientList){
         HashMap <String,Person> clientsHM = new HashMap<>();
         for(Person client : pClientList){
@@ -218,6 +271,36 @@ public class Simulation extends Thread {
         }
         return routeListHM;
         
+    }
+    
+    public void writeTrafficFile(){
+        String strMap = "";
+        Cell[][] nodes = map.getNodeMatrix();        
+        char[][] cityMap = map.getCharMatrix();
+        
+        int iLen = cityMap.length;
+        int jLen = cityMap[0].length;
+        
+        
+        for(int i = 0; i < iLen; i++){
+            for(int j = 0; j < jLen; j++){
+                //Print the taxi
+                strMap += ' ';
+                if(nodes[i][j] != null && nodes[i][j].getWeight() > 0){
+                    strMap += Math.round(nodes[i][j].getWeight());
+                }else{  
+                    strMap +=  cityMap[i][j];
+                }
+                strMap += ' ';
+            }
+           strMap += '\n';
+        }
+        System.out.println(strMap);
+        fileHandler.appendFile(FILENAME, strMap);
+    }
+    
+    private HashMap<Character, Integer> getAmountPeople(){
+        return null;
     }
        
     public void switchRoute(){
@@ -275,9 +358,9 @@ public class Simulation extends Thread {
                 System.out.println("Hola");
                 overlord.send("update");
                 overlord.update();
-                String strMap = createMap();
-                System.out.println(strMap);
-                //MainWindow.upadateMap(strMap);
+                
+                System.out.println(createMap());
+                MainWindow.upadateMap(createMapUI());
                 try {
                     Thread.currentThread().sleep(getDaemon());
                 } catch (InterruptedException ex) {
