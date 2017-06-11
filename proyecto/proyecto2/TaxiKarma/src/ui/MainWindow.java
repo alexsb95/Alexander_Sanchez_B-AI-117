@@ -83,6 +83,8 @@ public class MainWindow extends javax.swing.JFrame {
         txtA_Cant = new javax.swing.JTextArea();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        l_Time = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -200,6 +202,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        txtA_Map.setEditable(false);
         txtA_Map.setColumns(20);
         txtA_Map.setRows(5);
         jScrollPane1.setViewportView(txtA_Map);
@@ -249,6 +252,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         jLabel18.setText("Modos");
 
+        txtA_Cant.setEditable(false);
         txtA_Cant.setColumns(20);
         txtA_Cant.setRows(5);
         jScrollPane2.setViewportView(txtA_Cant);
@@ -258,6 +262,12 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel20.setText("Cantidad de habitantes");
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel21.setText("Hora");
+
+        l_Time.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        l_Time.setText("00:00");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -358,13 +368,15 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addContainerGap(21, Short.MAX_VALUE))))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(tf_animate, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btn_animate))
+                        .addComponent(btn_animate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel21))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addGap(18, 18, 18)
@@ -378,13 +390,18 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(96, 96, 96)
                         .addComponent(jLabel14)
                         .addGap(23, 23, 23)
-                        .addComponent(tf_map, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tf_map, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel15)
                         .addGap(18, 18, 18)
                         .addComponent(tf_building, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btn_load)))
+                        .addComponent(btn_load))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(l_Time)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -402,12 +419,20 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel15)
                     .addComponent(tf_building, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_load))
-                .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(btn_animate)
-                    .addComponent(tf_animate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(btn_animate)
+                            .addComponent(tf_animate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel21)
+                            .addComponent(l_Time))
+                        .addGap(18, 18, 18)))
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -585,7 +610,7 @@ public class MainWindow extends javax.swing.JFrame {
             String mapFile = tf_map.getText();
             String buildingFile = tf_building.getText();
 
-            simulation.setFiles("Map.txt", "Buildings.txt");
+            simulation.setFiles("Map2.txt", "Buildings2.txt");
         } 
     }//GEN-LAST:event_btn_loadActionPerformed
 
@@ -617,6 +642,10 @@ public class MainWindow extends javax.swing.JFrame {
     
     public static void upadateBuildings(String pAmount){
             txtA_Cant.setText(pAmount);
+    }
+    
+    public static void upadateTime(String pTime){
+            l_Time.setText(pTime);
     }
     
     /**
@@ -683,6 +712,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -695,6 +725,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private static javax.swing.JLabel l_Time;
     private javax.swing.JRadioButton rb_parade;
     private javax.swing.JRadioButton rb_search;
     private javax.swing.ButtonGroup taxiModeGroup;

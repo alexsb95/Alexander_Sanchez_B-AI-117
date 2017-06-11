@@ -350,6 +350,8 @@ public class CityMap {
         TaxiCab newTaxi = new TaxiCab(overlord);
         newTaxi.setAlgorithm(algorithm);
         newTaxi.setMap(this);
+        newTaxi.setCurrentI(1);
+        newTaxi.setCurrentJ(1);
         taxiList.add(newTaxi);
     }
     

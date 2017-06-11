@@ -98,7 +98,7 @@ public class Simulation extends Thread {
         cm.addSeveralClients(3);*/
         
        
-        Simulation sim = new Simulation("Map.txt", "Buildings.txt");
+        Simulation sim = new Simulation("Map2.txt", "Buildings2.txt");
         EventEmiter overlord2 = sim.getEE(); 
         System.out.println(sim.createMap());
         overlord2.send("search");
@@ -169,6 +169,47 @@ public class Simulation extends Thread {
                      strMap +=  '+';
                 }else if (clientListHM.containsKey(i + "-" + j)){
                     strMap += 'o';
+                }else{      
+                    strMap +=  cityMap[i][j];
+                }
+                
+            }
+           strMap += '\n';
+        }
+        
+        return strMap;
+    }
+    
+    public String createMapTraffic(){
+
+        String strMap = "";
+        
+        Cell[][] nodes = map.getNodeMatrix();
+        char[][] cityMap = map.getCharMatrix();
+        int iLen = cityMap.length;
+        int jLen = cityMap[0].length;
+        
+        HashMap<String,Person> clientListHM = TransClientHM(map.getClientList());
+        HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
+        HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
+        HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
+
+        
+        for(int i = 0; i < iLen; i++){
+            for(int j = 0; j < jLen; j++){
+                //Print the taxi
+                if(taxiListHM.containsKey(i+"-"+j)){
+                    strMap +=  '@';
+                }//Print the path
+                else if(pathOn && pathHM.containsKey(i + "-" + j)){
+                    strMap +=  '*';
+                }//Print the route
+                else if(routeOn && routeHM.containsKey(i + "-" + j)){
+                     strMap +=  '+';
+                }else if (clientListHM.containsKey(i + "-" + j)){
+                    strMap += 'o';
+                }else if(nodes[i][j] != null && nodes[i][j].getWeight() > 0){
+                   strMap += Math.round(nodes[i][j].getWeight());
                 }else{      
                     strMap +=  cityMap[i][j];
                 }
@@ -378,9 +419,10 @@ public class Simulation extends Thread {
                 overlord.send("update");
                 overlord.update();
                 
-                System.out.println(createMap());
+                System.out.println(createMapTraffic());
                 MainWindow.upadateMap(createMapUI());
                 MainWindow.upadateBuildings(getBuildingAmount());
+                MainWindow.upadateTime(getTimeFormat());
                 
                 writeTrafficFile();
                 try {

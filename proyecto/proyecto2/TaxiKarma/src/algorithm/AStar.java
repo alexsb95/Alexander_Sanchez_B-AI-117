@@ -63,7 +63,7 @@ public class AStar implements SearchAlgorithm{
 	private void evaluateCost(Cell pCurrent, Cell pNeighbor){
 		
             if(!visitedCells[pNeighbor.getX()][pNeighbor.getY()]){
-                int costFromStart = pCurrent.getCostFromStart() + 1;
+                int costFromStart = pCurrent.getCostFromStart() + pCurrent.getCost(pNeighbor);
 
                 boolean inFrotier = frontier.contains(pNeighbor);
                 if(!inFrotier || costFromStart > pNeighbor.getCostFromStart()){
