@@ -3,11 +3,11 @@ package map;
 
 import algorithm.Cell;
 import entities.TaxiCab;
-import fsm.Decreasing;
+import fsm.sectionstates.Decreasing;
 import fsm.EventEmiter;
 import fsm.FSM;
-import fsm.Increasing;
-import fsm.Keeping;
+import fsm.sectionstates.Increasing;
+import fsm.sectionstates.Keeping;
 import fsm.State;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,16 +23,18 @@ public class StreetSection {
     private double stress;
     private HashMap<String, TaxiCab> taxisRecord;
     private HashMap<String, TaxiCab> taxisActual;
-    private double cost;
+    private double cost = 3;
+    private double relief = 1;
     private FSM vigilante;
     private EventEmiter overlord;
+    private String id;
     
     public StreetSection(HashMap<String, Cell> pStreet, EventEmiter pEmiter){
         street = pStreet;
         stress = 0;
         taxisRecord = new HashMap<>();
         taxisActual = new HashMap<>();
-        cost = 0.25;
+        id = UUID.randomUUID().toString();
         setUpStates(pEmiter);
     }
     
@@ -61,7 +63,7 @@ public class StreetSection {
     }
 
     public void setStress(double stress) {
-        this.stress = stress;
+        this.stress =  this.stress + stress;
         
         for (Map.Entry<String, Cell> entry: street.entrySet()) {
             entry.getValue().changeWeight(stress);
@@ -69,34 +71,46 @@ public class StreetSection {
     }
 
 
-    public void addTaxi(TaxiCab pTaxi) {
-        if(taxisRecord.containsKey(pTaxi.getId())){
+    public String addTaxi(TaxiCab pTaxi) {
+        if(!taxisRecord.containsKey(pTaxi.getId()) && this.taxisActual.size() >= 1){
             increasing();
         }
         this.taxisActual.put(pTaxi.getId(), pTaxi);
         this.taxisRecord.put(pTaxi.getId(), pTaxi);
-
         
+        return id;      
     }
     
-    public void removeTaxi(TaxiCab pTaxi){
-        this.taxisActual.remove(pTaxi.getId());
-        if(this.taxisActual.isEmpty()){
-            this.overlord.send("decrease", vigilante.getId());
+    public boolean removeTaxi(TaxiCab pTaxi){
+        
+        if(this.taxisActual.containsKey(pTaxi.getId())){
+            this.taxisActual.remove(pTaxi.getId());
+            if(this.taxisActual.isEmpty()){
+                
+                this.overlord.send("decrease", vigilante.getId());
+            }
+            return false;
+        }else{
+            return true;
         }
+
     }
     
     public void increasing(){
-         setStress(this.stress + cost);
+        System.out.println("Subiendo");
+         setStress(cost);
     }
     
     public void decreasing(){
-        if(this.stress >= 0.1){
-            setStress(this.stress - 0.1);
+       System.out.print("Bajando id: " + this.id+ " stress: " + this.stress );
+        if(this.stress >= relief){
+            setStress(-1*relief);
+             System.out.println(" resultado: " + this.stress );
         }else{
             this.taxisRecord.clear();
-            setStress(0);
+            setStress(-this.stress);
             this.overlord.send("keep", vigilante.getId());
+             System.out.println("resultadoL " + this.stress );
         }   
     }
     
@@ -114,6 +128,18 @@ public class StreetSection {
     
     public boolean isStreet(String pKey){
         return street.containsKey(pKey);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public double getRelief() {
+        return relief;
+    }
+
+    public void setRelief(double relief) {
+        this.relief = relief;
     }
     
     

@@ -5,10 +5,10 @@ import algorithm.AStar;
 import algorithm.Cell;
 import fsm.EventEmiter;
 import fsm.FSM;
-import fsm.OnRoute;
-import fsm.Parading;
-import fsm.Parked;
-import fsm.Searching;
+import fsm.taxistates.OnRoute;
+import fsm.taxistates.Parading;
+import fsm.taxistates.Parked;
+import fsm.taxistates.Searching;
 import fsm.State;
 import fsm.Transition;
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ public class TaxiCab {
     private  LinkedList<LinkedList<Coord>> pending;
     private  LinkedList<HashMap<String, Coord>> pendingHS;
     private  HashMap<String, Coord> pathHS;
+    private ArrayList<String> idSection;
 
     
     public TaxiCab(EventEmiter pEmiter){
@@ -49,7 +50,8 @@ public class TaxiCab {
         actualRoute = new LinkedList<Coord>();
         actualRouteHS = new HashMap<String, Coord>();
         pathHS = new HashMap<String, Coord> ();
-
+        idSection = new ArrayList<>();
+            
         id = UUID.randomUUID().toString();
         
         setUpStates(pEmiter);
@@ -79,7 +81,7 @@ public class TaxiCab {
     }
     
     public void followRoute(){
-        map.removeTaxiPos(this);
+
         if(!actualRoute.isEmpty()){
             Coord newPos = actualRoute.pop();
             Coord taxiPos = getPosition();
@@ -98,7 +100,7 @@ public class TaxiCab {
         }else if("OnRoute".equals(getCurrentState())){
             overlord.send("search", motor.getId());
         }
-        map.addTaxiPos(this);
+        map.updateTaxiPos(this);
     }
     
     private void statusSearch(){
@@ -153,13 +155,12 @@ public class TaxiCab {
     }
     
     public void parade(){
-        ArrayList <Character> blockList = map.getPosibleBlocks();
+        //ArrayList <Character> blockList = map.getPosibleBlocks();
+        ArrayList <Character> blockList = map.getClosetBlocks(this.getCurrentI(), this.getCurrentJ());
         loadMultipleRutes(blockList);
-        System.out.println("LOAD " + this.pending.toString());
     }
     
-    private void loadSingleRoute(int pDestinI, int pDestinJ){
-            
+    private void loadSingleRoute(int pDestinI, int pDestinJ){       
             LinkedList<LinkedList<Coord>> pending = new LinkedList<>();
             LinkedList<HashMap<String, Coord>> pendingHM = new LinkedList<>();
                         
@@ -332,7 +333,16 @@ public class TaxiCab {
     public void setClient(Person client) {
         this.client = client;
     }
+
+    public ArrayList<String> getIdSection() {
+        return idSection;
+    }
+
+    public void setIdSection(ArrayList<String> idSection) {
+        this.idSection = idSection;
+    }
     
+
     @Override
     public String toString(){
         return "ID: " + id +  " Pos: " + this.currentI  + "-" + this.currentJ + " Status: " + this.getCurrentState();

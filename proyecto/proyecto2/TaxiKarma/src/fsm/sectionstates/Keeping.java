@@ -1,6 +1,8 @@
 
-package fsm;
+package fsm.sectionstates;
 
+import fsm.FSM;
+import fsm.State;
 import map.StreetSection;
 
 /**

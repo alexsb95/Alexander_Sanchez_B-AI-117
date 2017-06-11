@@ -372,17 +372,35 @@ public class CityMap {
         return peopleList;
     }
         
-    public void addTaxiPos(TaxiCab pTaxi){
+    public void updateTaxiPos(TaxiCab pTaxi){
+        ArrayList<String> ids = new ArrayList<>();
+        
+        //Create the new list with the sections that the taxi belongs
         for(StreetSection street : section){
+            boolean acceptsSection = street.isStreet(pTaxi.getPosition().toString()) && !pTaxi.getIdSection().contains(street.getId());
             if(street.isStreet(pTaxi.getPosition().toString())){
-                street.addTaxi(pTaxi);
+                if (!pTaxi.getIdSection().contains(street.getId())){
+                    street.addTaxi(pTaxi);
+                }
+                ids.add(street.getId());
             }
         }
+        
+        //Remove the taxis from the sections
+        for(String idStreet : pTaxi.getIdSection()){
+            if(!ids.contains(idStreet)){
+                removeTaxiPos(idStreet, pTaxi);
+            }
+        }
+                System.out.println("New: " + ids.toString() + " -- Old:"+ pTaxi.getIdSection());
+        pTaxi.setIdSection(ids);
+        
+
     }
     
-    public void removeTaxiPos(TaxiCab pTaxi){
+    private void removeTaxiPos(String pId, TaxiCab pTaxi){
         for(StreetSection street : section){
-            if(street.isStreet(pTaxi.getPosition().toString())){
+            if(street.getId() == null ? pId == null : street.getId().equals(pId)){
                 street.removeTaxi(pTaxi);
             }
         }

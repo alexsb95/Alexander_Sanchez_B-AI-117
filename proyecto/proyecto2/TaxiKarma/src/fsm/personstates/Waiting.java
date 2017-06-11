@@ -3,19 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fsm;
+package fsm.personstates;
 
-import entities.Person;
+import fsm.FSM;
+import fsm.State;
 
 /**
  *
  * @author Alex
  */
-public class Resting implements State{
+public class Waiting implements State{
 
     @Override
-    public boolean accepts(String pMessage, State currentState) {
-        if("gohome".equals(pMessage) && "Waiting".equals(currentState.getState())){
+    public boolean accepts(String pMessage, State pCurrentState) {
+        if("wait".equals(pMessage) && ("Resting".equals(pCurrentState.getState()) || "Working".equals(pCurrentState.getState()))){
             return true;
         }
         return false;
@@ -28,13 +29,9 @@ public class Resting implements State{
     public void onUpdate(FSM fsm) {  }
 
     @Override
-    public void onExit(FSM fsm) {
-        Person ppl = (Person)fsm.getOwner();
-        ppl.setDestination(ppl.getWorkplace());
-    }
-
+    public void onExit(FSM fsm) {  }
     @Override
-    public String getState() {
+    public String getState(){
         return this.getClass().getSimpleName();
     }
     

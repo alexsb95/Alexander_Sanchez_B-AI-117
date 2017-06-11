@@ -7,10 +7,10 @@ package entities;
 
 import fsm.EventEmiter;
 import fsm.FSM;
-import fsm.Resting;
+import fsm.personstates.Resting;
 import fsm.State;
-import fsm.Waiting;
-import fsm.Working;
+import fsm.personstates.Waiting;
+import fsm.personstates.Working;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;

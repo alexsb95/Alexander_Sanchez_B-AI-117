@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package taxikarma;
 
-import algorithm.AStar;
 import algorithm.Cell;
 import map.Block;
 import utils.FileManager;
@@ -14,12 +9,10 @@ import entities.TaxiCab;
 import fsm.EventEmiter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import map.CityMap;
-import map.DayCycle;
 import ui.MainWindow;
 import utils.Coord;
 
@@ -115,7 +108,6 @@ public class Simulation extends Thread {
             //sim.taxiList.get(0).followRoute();
             overlord2.send("update");
             overlord2.update();
-            sim.writeTrafficFile();
         }
 
         System.out.println(sim.createMap());
@@ -159,7 +151,7 @@ public class Simulation extends Thread {
         HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
         HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
         HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
-        System.out.println("Client list: "+clientListHM.size());
+        //System.out.println("Client list: "+clientListHM.size());
         //System.out.println("Client list: "+clientListHM.toString());
         //System.out.println("Path: " + pathHM.toString());
         //System.out.println("Route: " + routeHM.toString());
@@ -200,10 +192,6 @@ public class Simulation extends Thread {
         HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
         HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
         HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
-        System.out.println("Client list: "+clientListHM.size());
-        //System.out.println("Client list: "+clientListHM.toString());
-        //System.out.println("Path: " + pathHM.toString());
-        //System.out.println("Route: " + routeHM.toString());
         
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){
@@ -274,7 +262,7 @@ public class Simulation extends Thread {
     }
     
     public void writeTrafficFile(){
-        String strMap = "";
+        String strMap = "\n " + getTimeFormat() + " \n";
         Cell[][] nodes = map.getNodeMatrix();        
         char[][] cityMap = map.getCharMatrix();
         
@@ -287,7 +275,7 @@ public class Simulation extends Thread {
                 //Print the taxi
                 strMap += ' ';
                 if(nodes[i][j] != null && nodes[i][j].getWeight() > 0){
-                    strMap += Math.round(nodes[i][j].getWeight());
+                   strMap += Math.round(nodes[i][j].getWeight());
                 }else{  
                     strMap +=  cityMap[i][j];
                 }
@@ -299,8 +287,39 @@ public class Simulation extends Thread {
         fileHandler.appendFile(FILENAME, strMap);
     }
     
+    
+    public String getTimeFormat(){
+        int time = map.getTime();
+        int minutes = 0;
+        
+        while(time >= 60){
+            time = time-60;
+            minutes++;
+        }
+        
+        return minutes + ":" + time;
+    }
+    
+    public String getBuildingAmount(){
+        HashMap<Character, Integer> amountHS = getAmountPeople();
+        String strAmount = "";
+        
+        for (Map.Entry<Character, Integer> entry: amountHS.entrySet()) {
+           strAmount += entry.getKey() + " : " + entry.getValue() + "\n";
+        }
+        
+        return strAmount;
+    }
+    
     private HashMap<Character, Integer> getAmountPeople(){
-        return null;
+        HashMap<Character, Block> blocks = map.getHSBlocks();
+        HashMap<Character, Integer> amountHS = new HashMap<>();
+                
+        for (Map.Entry<Character, Block> entry: blocks.entrySet()) {
+            amountHS.put(entry.getKey(), entry.getValue().cantPerson());
+        }
+
+        return amountHS;
     }
        
     public void switchRoute(){
@@ -361,6 +380,9 @@ public class Simulation extends Thread {
                 
                 System.out.println(createMap());
                 MainWindow.upadateMap(createMapUI());
+                MainWindow.upadateBuildings(getBuildingAmount());
+                
+                writeTrafficFile();
                 try {
                     Thread.currentThread().sleep(getDaemon());
                 } catch (InterruptedException ex) {
@@ -373,7 +395,6 @@ public class Simulation extends Thread {
                     Logger.getLogger(Simulation.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
 
         }
     }

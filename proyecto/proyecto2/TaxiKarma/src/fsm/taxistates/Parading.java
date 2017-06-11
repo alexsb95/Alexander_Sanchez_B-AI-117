@@ -3,30 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fsm;
+package fsm.taxistates;
 
 import entities.TaxiCab;
+import fsm.FSM;
+import fsm.State;
 
 /**
  *
  * @author Alex
  */
-public class Searching implements State{
+public class Parading implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("search".equals(pMessage) && 
-           ("Transition".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "OnRoute".equals(pCurrentState.getState())) ){
+
+        if("parade".equals(pMessage) && 
+            ("Transition".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "Searching".equals(pCurrentState.getState()) || "OnRoute".equals(pCurrentState.getState()) )){
             return true;
         }
-
         return false;
     }
 
     @Override
     public void onEnter(FSM pFsm) {
-        TaxiCab taxi = (TaxiCab)pFsm.getOwner();
-        taxi.search();
+       TaxiCab taxi = (TaxiCab)pFsm.getOwner();
+        taxi.parade();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class Searching implements State{
 
     @Override
     public String getState() {
-        return this.getClass().getSimpleName();
+                return this.getClass().getSimpleName();
     }
     
 }

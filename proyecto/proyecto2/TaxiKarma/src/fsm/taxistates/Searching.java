@@ -3,40 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fsm;
+package fsm.taxistates;
 
 import entities.TaxiCab;
+import fsm.FSM;
+import fsm.State;
 
 /**
  *
  * @author Alex
  */
-public class Parked implements State{
+public class Searching implements State{
 
-    char objetive;
-    
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if(pMessage.contains("-") && !"OnRoute".equals(pCurrentState.getState())){
-            String [] splitMessage = pMessage.split("-");
-            if("park".equals(splitMessage[0])){
-                objetive = splitMessage[1].charAt(0);
-                return true;
-            }else{
-                return false;
-            }          
+        if("search".equals(pMessage) && 
+           ("Transition".equals(pCurrentState.getState()) || "Parading".equals(pCurrentState.getState()) || "Parked".equals(pCurrentState.getState()) || "OnRoute".equals(pCurrentState.getState())) ){
+            return true;
         }
+
         return false;
     }
 
     @Override
     public void onEnter(FSM pFsm) {
         TaxiCab taxi = (TaxiCab)pFsm.getOwner();
-        taxi.park(objetive);
+        taxi.search();
     }
 
     @Override
-    public void onUpdate(FSM pFsm) { 
+    public void onUpdate(FSM pFsm) {
         TaxiCab taxi = (TaxiCab)pFsm.getOwner();
         taxi.followRoute();
     }

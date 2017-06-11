@@ -1,11 +1,10 @@
 
 package map;
 
-import entities.Person;
 import fsm.EventEmiter;
 import fsm.FSM;
-import fsm.NonProductive;
-import fsm.Productive;
+import fsm.daystates.NonProductive;
+import fsm.daystates.Productive;
 import fsm.State;
 import java.util.ArrayList;
 import java.util.UUID;

@@ -65,6 +65,9 @@ public class Cell {
 	    return costFromStart + estimatedCostToGoal;
 	}
 
+        public int getCost(Cell pCell){
+		  return costFromStart + getEstimatedCost(pCell);
+	}
 	  
         public int getEstimatedCost(Cell pObjetive){
             return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());

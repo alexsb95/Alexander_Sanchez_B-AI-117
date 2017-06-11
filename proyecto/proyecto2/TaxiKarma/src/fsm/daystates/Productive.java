@@ -1,6 +1,8 @@
 
-package fsm;
+package fsm.daystates;
 
+import fsm.FSM;
+import fsm.State;
 import map.DayCycle;
 
 /**

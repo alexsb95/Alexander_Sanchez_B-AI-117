@@ -3,34 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fsm;
+package fsm.personstates;
 
 import entities.Person;
+import fsm.FSM;
+import fsm.State;
 
 /**
  *
  * @author Alex
  */
-public class GettingReady implements State{
-     @Override
+public class Resting implements State{
+
+    @Override
     public boolean accepts(String pMessage, State currentState) {
-        if("getready".equals(pMessage) && ("Working".equals(currentState.getState()) || "Resting".equals(currentState.getState()))){
+        if("gohome".equals(pMessage) && "Waiting".equals(currentState.getState())){
             return true;
         }
         return false;
     }
 
     @Override
-    public void onEnter(FSM fsm) {
-        Person ppl = (Person)fsm.getOwner();
-        ppl.setDelay();
-    }
+    public void onEnter(FSM fsm) { }
 
     @Override
-    public void onUpdate(FSM fsm) { 
-        Person ppl = (Person)fsm.getOwner();
-        ppl.reduceTime();
-    }
+    public void onUpdate(FSM fsm) {  }
 
     @Override
     public void onExit(FSM fsm) {
