@@ -6,6 +6,12 @@
 package ui;
 
 import fsm.EventEmiter;
+import java.awt.Color;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import taxikarma.Simulation;
 
 /**
@@ -17,6 +23,8 @@ public class MainWindow extends javax.swing.JFrame {
     
     private static Simulation simulation;
     private static EventEmiter overlord;
+    
+    private static DefaultStyledDocument document = new DefaultStyledDocument(); 
     /**
      * Creates new form Input
      */
@@ -63,8 +71,6 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         btn_addTaxi = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtA_Map = new javax.swing.JTextArea();
         jLabel14 = new javax.swing.JLabel();
         tf_map = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
@@ -90,6 +96,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         tf_decrement = new javax.swing.JTextField();
         btn_TrafficCost = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tP_Map = new javax.swing.JTextPane(document);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -207,11 +215,6 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        txtA_Map.setEditable(false);
-        txtA_Map.setColumns(20);
-        txtA_Map.setRows(5);
-        jScrollPane1.setViewportView(txtA_Map);
-
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel14.setText("Mapa");
 
@@ -293,6 +296,9 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        tP_Map.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jScrollPane3.setViewportView(tP_Map);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -302,8 +308,8 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jSeparator2))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1014, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 967, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
@@ -521,20 +527,19 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel20)
                     .addComponent(jLabel21)
                     .addComponent(l_Time))
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+		
 
+    
     private void rb_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rb_searchActionPerformed
@@ -688,7 +693,22 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_TrafficCostActionPerformed
 
     public static void upadateMap(String pMap){
-           txtA_Map.setText(pMap);
+        // build a style 	
+       /* StyleContext context = new StyleContext();
+        Style style = context.addStyle("azul", null); 		 		 
+        StyleConstants.setFontFamily(style, "Monospaced"); 		    
+        StyleConstants.setFontSize(style, 20); 			
+        StyleConstants.setForeground(style, Color.WHITE);   
+        
+        try { 					
+            document.insertString(document.getLength(), pMap, style);
+         					
+        } catch (BadLocationException e) { 						
+            // TODO Auto-generated catch block 						
+            e.printStackTrace(); 					
+        }*/
+        
+        tP_Map.setText(pMap);
     }
     
     public static void upadateBuildings(String pAmount){
@@ -774,14 +794,15 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private static javax.swing.JLabel l_Time;
     private javax.swing.JRadioButton rb_parade;
     private javax.swing.JRadioButton rb_search;
+    private static javax.swing.JTextPane tP_Map;
     private javax.swing.ButtonGroup taxiModeGroup;
     private javax.swing.JTextField tf_Percentage;
     private javax.swing.JTextField tf_actual;
@@ -796,6 +817,5 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField tf_park;
     private javax.swing.JTextField tf_work;
     private static javax.swing.JTextArea txtA_Cant;
-    private static javax.swing.JTextArea txtA_Map;
     // End of variables declaration//GEN-END:variables
 }

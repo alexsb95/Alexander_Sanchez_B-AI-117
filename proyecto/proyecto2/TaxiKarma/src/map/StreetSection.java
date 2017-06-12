@@ -23,8 +23,8 @@ public class StreetSection {
     private double stress;
     private HashMap<String, TaxiCab> taxisRecord;
     private HashMap<String, TaxiCab> taxisActual;
-    private double cost = 3;
-    private double relief = 1;
+    private double cost;
+    private double relief;
     private FSM vigilante;
     private EventEmiter overlord;
     private String id;
@@ -36,6 +36,9 @@ public class StreetSection {
         taxisActual = new HashMap<>();
         id = UUID.randomUUID().toString();
         setUpStates(pEmiter);
+        
+        cost = pIncrease;
+        relief = pDecrease;
     }
     
     private void setUpStates(EventEmiter pEmiter){

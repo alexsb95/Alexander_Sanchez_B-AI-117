@@ -370,7 +370,7 @@ public class Simulation extends Thread {
                 overlord.update();
                 
                 System.out.println(createMapTraffic());
-                MainWindow.upadateMap(createMapUI());
+                MainWindow.upadateMap(createMap());
                 MainWindow.upadateBuildings(getBuildingAmount());
                 MainWindow.upadateTime(getTimeFormat());
                 
