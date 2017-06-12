@@ -49,7 +49,7 @@ public class CityMap {
             transformMatrix(charMatrix, charMatrix.length, charMatrix[0].length);
             algorithm = new AStar(nodeMatrix, nodeMatrix.length, nodeMatrix[0].length);
             initializeTaxis(algorithm);
-            defineSection();
+            
        }else{
            System.out.println("Error abriendo archivo");
        }
@@ -242,7 +242,7 @@ public class CityMap {
         return streetBlocks.containsKey(pBlock);
     }
     
-    public void defineSection(){
+    public void defineSection(int pIncrease, int pDecrease){
         section = new ArrayList<>();
         int lengthI = nodeMatrix.length;
         int lenghtJ = nodeMatrix[0].length;
@@ -253,7 +253,7 @@ public class CityMap {
             for(int j = 0; j < lenghtJ; j++){        
                 if(this.nodeMatrix[i][j] == null){                    
                     if(tempStreet.size() >= 4){            
-                        section.add(new StreetSection(tempStreet, overlord));
+                        section.add(new StreetSection(tempStreet, overlord, pIncrease, pDecrease));
                         tempStreet = new HashMap<>();
                     }else{
                         tempStreet.clear();
@@ -270,7 +270,7 @@ public class CityMap {
             for(int i = 0; i < lengthI; i++){
                 if(this.nodeMatrix[i][j] == null){
                     if(tempStreet.size() >= 4){
-                        section.add(new StreetSection(tempStreet, overlord));
+                        section.add(new StreetSection(tempStreet, overlord, pIncrease, pDecrease));
                         tempStreet = new HashMap<>();
                     }else{
                         tempStreet.clear();

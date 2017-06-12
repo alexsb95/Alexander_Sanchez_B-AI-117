@@ -29,7 +29,7 @@ public class StreetSection {
     private EventEmiter overlord;
     private String id;
     
-    public StreetSection(HashMap<String, Cell> pStreet, EventEmiter pEmiter){
+    public StreetSection(HashMap<String, Cell> pStreet, EventEmiter pEmiter, double pIncrease, double pDecrease){
         street = pStreet;
         stress = 0;
         taxisRecord = new HashMap<>();
@@ -141,6 +141,7 @@ public class StreetSection {
     public void setRelief(double relief) {
         this.relief = relief;
     }
+    
     
     
     @Override

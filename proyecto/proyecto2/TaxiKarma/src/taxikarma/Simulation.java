@@ -52,50 +52,15 @@ public class Simulation extends Thread {
         map.iniComponents(pMapFile, pBuildingFile);
     }
 
-        
+    public void setTraficCost(int pIncrease, int pDecrease){
+        map.defineSection(pIncrease, pDecrease);
+    }    
         
     /**
      * @param args the command line arguments
      */
+    /*
     public static void main(String[] args) {
-        /*  Set de prueba
-        EventEmiter overLord = new EventEmiter();
-        
-        Person ppl = new Person(1,1,'A','B','A',overLord);
-        System.out.println("Person: " + ppl.toString());
-        ppl.startTime();
-        ppl.reduceTime();
-        overLord.send("wait", ppl.getBrain().getId());
-        overLord.update();
-        System.out.println(ppl.getCurrentState());
-        
-        
-        Block block = new Block(2,2,'A');
-        System.out.println("Wating?: " +block.areClientsWaiting());
-        block.newPerson(ppl);
-        System.out.println("Wating?: " + block.areClientsWaiting());
-        System.out.println("Cant: " + block.cantPerson());
-        System.out.println("Pick: " + block.pickUpClient());
-        
-        
-        InputReader inre = new InputReader();
-        char[][] map = inre.readFile("Map.txt");
-        
-         for(int i = 0; i < map.length; i++){
-            for(int j = 0; j < map[0].length; j++){ 
-                System.out.print(map[i][j]);
-            }
-            System.out.println();
-         }
-        
-        CityMap cm = new CityMap(overLord);
-        cm.iniComponents("Map.txt");
-        Cell[][] var = cm.nodeMatrix;
-        System.out.println(cm.toString());
-        
-        
-        cm.addNewClient(18, 18, 'S', 'V');
-        cm.addSeveralClients(3);*/
         
        
         Simulation sim = new Simulation("Map2.txt", "Buildings2.txt");
@@ -113,26 +78,11 @@ public class Simulation extends Thread {
         System.out.println(sim.createMap());
         
         System.out.println(sim.getTime());
-        
 
-        /*
-        DayCycle day = new DayCycle(6,20,overlord2);
-        System.out.println(day.getCurrentState());
-         System.out.println(day.getTimer());
-        overlord2.send("beproductive");
-        overlord2.update();
-        System.out.println(day.getCurrentState());
-        System.out.println(day.getTimer());
-        overlord2.send("update");
-        overlord2.update();
-        System.out.println(day.getCurrentState());
-        System.out.println(day.getTimer());
-        */
-  
         FileManager fM = new FileManager();
         fM.appendFile("Prueba.txt", "Hola");
         
-    }
+    }*/
     
 
     public EventEmiter getEE(){
@@ -250,7 +200,7 @@ public class Simulation extends Thread {
                     strMap += 'o';
                 }else{  
                     if(cityMap[i][j] == ' '){
-                        strMap +=  "   ";
+                        strMap +=  "    ";
                     }else
                         strMap +=  cityMap[i][j];
                 }
