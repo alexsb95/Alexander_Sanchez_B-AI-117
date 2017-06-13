@@ -1,0 +1,959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="TaxiKarma">
+  <ClassDiagramComponents>
+    <Class name="AStar" package="algorithm" visibility="public" xPosition="302.0" yPosition="163.0">
+      <Fields>
+        <Field name="initialCell" type="Cell" visibility="private"/>
+        <Field name="objetiveCell" type="Cell" visibility="private"/>
+        <Field name="xLength" type="int" visibility="private"/>
+        <Field name="yLength" type="int" visibility="private"/>
+        <Field name="matrix" type="Cell[][]" visibility="private"/>
+        <Field name="visitedCells" type="boolean[][]" visibility="private"/>
+        <Field name="frontier" type="LinkedList" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="Cell[][]" name="pMatrix"/>
+          <Argument type="int" name="pXLen"/>
+          <Argument type="int" name="pYLen"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getInitialCell" returnType="Cell" visibility="public"/>
+        <Method name="setInitialCell" returnType="void" visibility="public">
+          <Argument type="Cell" name="initialCell"/>
+        </Method>
+        <Method name="getObjetiveCell" returnType="Cell" visibility="public"/>
+        <Method name="setObjetiveCell" returnType="void" visibility="public">
+          <Argument type="Cell" name="pDestination"/>
+        </Method>
+        <Method name="getMatrix" returnType="Cell[][]" visibility="public"/>
+        <Method name="setMatrix" returnType="void" visibility="public">
+          <Argument type="Cell[][]" name="pMatrix"/>
+          <Argument type="int" name="pXLen"/>
+          <Argument type="int" name="pYLen"/>
+        </Method>
+        <Method name="setEstimated" returnType="void" visibility="private"/>
+        <Method name="evaluateCost" returnType="void" visibility="private">
+          <Argument type="Cell" name="pCurrent"/>
+          <Argument type="Cell" name="pNeighbor"/>
+        </Method>
+        <Method name="iniComponents" returnType="void" visibility="private">
+          <Argument type="int" name="pIniX"/>
+          <Argument type="int" name="pIniY"/>
+          <Argument type="int" name="pFinX"/>
+          <Argument type="int" name="pFinY"/>
+        </Method>
+        <Method name="calculatePath" returnType="ArrayList&lt;Cell&gt;" visibility="public">
+          <Argument type="int" name="pIniX"/>
+          <Argument type="int" name="pIniY"/>
+          <Argument type="int" name="pFinX"/>
+          <Argument type="int" name="pFinY"/>
+        </Method>
+        <Method name="printPath" returnType="void" visibility="private"/>
+        <Method name="getPath" returnType="ArrayList&lt;Cell&gt;" visibility="private"/>
+        <Method name="printPath" returnType="void" visibility="private">
+          <Argument type="Cell" name="pCurrent"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Cell" package="algorithm" visibility="public" xPosition="-435.0" yPosition="152.0">
+      <Fields>
+        <Field name="x" type="int" visibility="private"/>
+        <Field name="y" type="int" visibility="private"/>
+        <Field name="pathParent" type="Cell" visibility="private"/>
+        <Field name="costFromStart" type="int" visibility="private"/>
+        <Field name="estimatedCostToGoal" type="int" visibility="private"/>
+        <Field name="weight" type="double" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="pX"/>
+          <Argument type="int" name="pY"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getX" returnType="int" visibility="public"/>
+        <Method name="setX" returnType="void" visibility="public">
+          <Argument type="int" name="x"/>
+        </Method>
+        <Method name="getY" returnType="int" visibility="public"/>
+        <Method name="setY" returnType="void" visibility="public">
+          <Argument type="int" name="y"/>
+        </Method>
+        <Method name="getPathParent" returnType="Cell" visibility="public"/>
+        <Method name="setPathParent" returnType="void" visibility="public">
+          <Argument type="Cell" name="pathParent"/>
+        </Method>
+        <Method name="getCostFromStart" returnType="int" visibility="public"/>
+        <Method name="setCostFromStart" returnType="void" visibility="public">
+          <Argument type="int" name="costFromStart"/>
+        </Method>
+        <Method name="getEstimatedCostToGoal" returnType="int" visibility="public"/>
+        <Method name="setEstimatedCostToGoal" returnType="void" visibility="public">
+          <Argument type="int" name="estimatedCostToGoal"/>
+        </Method>
+        <Method name="compareTo" returnType="int" visibility="public">
+          <Argument type="Object" name="other"/>
+        </Method>
+        <Method name="getCost" returnType="int" visibility="public"/>
+        <Method name="getCost" returnType="int" visibility="public">
+          <Argument type="Cell" name="pCell"/>
+        </Method>
+        <Method name="getEstimatedCost" returnType="int" visibility="public">
+          <Argument type="Cell" name="pObjetive"/>
+        </Method>
+        <Method name="getWeight" returnType="double" visibility="public"/>
+        <Method name="setWeight" returnType="void" visibility="public">
+          <Argument type="double" name="weight"/>
+        </Method>
+        <Method name="changeWeight" returnType="void" visibility="public">
+          <Argument type="double" name="weight"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Person" package="entities" visibility="public" xPosition="2034.0" yPosition="416.0">
+      <Fields>
+        <Field name="currentI" type="int" visibility="private"/>
+        <Field name="currentJ" type="int" visibility="private"/>
+        <Field name="workplace" type="char" visibility="private"/>
+        <Field name="home" type="char" visibility="private"/>
+        <Field name="currentBlock" type="char" visibility="private"/>
+        <Field name="destination" type="char" visibility="private"/>
+        <Field name="defaultTimer" type="int" visibility="private"/>
+        <Field name="timer" type="int" visibility="private"/>
+        <Field name="brain" type="FSM" visibility="private"/>
+        <Field name="overlord" type="EventEmiter" visibility="private"/>
+        <Field name="schedule" type="DayCycle" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+          <Argument type="char" name="pWorkplace"/>
+          <Argument type="char" name="pHome"/>
+          <Argument type="char" name="pCurrentBlock"/>
+          <Argument type="EventEmiter" name="pEmiter"/>
+          <Argument type="DayCycle" name="pSchedule"/>
+        </Constructor>
+        <Constructor visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUpStates" returnType="void" visibility="private">
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Method>
+        <Method name="getCurrentBlock" returnType="char" visibility="public"/>
+        <Method name="setCurrentBlock" returnType="void" visibility="public">
+          <Argument type="char" name="currentBlock"/>
+        </Method>
+        <Method name="getCurrentI" returnType="int" visibility="public"/>
+        <Method name="setCurrentI" returnType="void" visibility="public">
+          <Argument type="int" name="currentI"/>
+        </Method>
+        <Method name="getCurrentJ" returnType="int" visibility="public"/>
+        <Method name="setCurrentJ" returnType="void" visibility="public">
+          <Argument type="int" name="currentJ"/>
+        </Method>
+        <Method name="setWorkplace" returnType="void" visibility="public">
+          <Argument type="char" name="workplace"/>
+        </Method>
+        <Method name="getWorkplace" returnType="char" visibility="public"/>
+        <Method name="setHome" returnType="void" visibility="public">
+          <Argument type="char" name="home"/>
+        </Method>
+        <Method name="getHome" returnType="char" visibility="public"/>
+        <Method name="setDestination" returnType="void" visibility="public">
+          <Argument type="char" name="pDestination"/>
+        </Method>
+        <Method name="getDestination" returnType="char" visibility="public"/>
+        <Method name="getBrain" returnType="FSM" visibility="public"/>
+        <Method name="getTimer" returnType="int" visibility="public"/>
+        <Method name="setTimer" returnType="void" visibility="public">
+          <Argument type="int" name="pAmout"/>
+        </Method>
+        <Method name="setDelay" returnType="void" visibility="public"/>
+        <Method name="reduceTime" returnType="void" visibility="public"/>
+        <Method name="getCurrentState" returnType="String" visibility="public"/>
+        <Method name="update" returnType="void" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="TaxiCab" package="entities" visibility="public" xPosition="1262.0" yPosition="97.0">
+      <Fields>
+        <Field name="currentI" type="int" visibility="private"/>
+        <Field name="currentJ" type="int" visibility="private"/>
+        <Field name="desI" type="int" visibility="private"/>
+        <Field name="desJ" type="int" visibility="private"/>
+        <Field name="motor" type="FSM" visibility="private"/>
+        <Field name="overlord" type="EventEmiter" visibility="private"/>
+        <Field name="client" type="Person" visibility="private"/>
+        <Field name="id" type="String" visibility="private"/>
+        <Field name="map" type="CityMap" visibility="private"/>
+        <Field name="algorithm" type="AStar" visibility="private"/>
+        <Field name="actualRoute" type="LinkedList&lt;Coord&gt;" visibility="private"/>
+        <Field name="actualRouteHS" type="HashMap&lt;String, Coord&gt;" visibility="private"/>
+        <Field name="pending" type="LinkedList&lt;LinkedList&lt;Coord&gt;&gt;" visibility="private"/>
+        <Field name="pendingHS" type="LinkedList&lt;HashMap&lt;String, Coord&gt;&gt;" visibility="private"/>
+        <Field name="pathHS" type="HashMap&lt;String, Coord&gt;" visibility="private"/>
+        <Field name="idSection" type="ArrayList&lt;String&gt;" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUpStates" returnType="void" visibility="private">
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Method>
+        <Method name="moveTaxi" returnType="void" visibility="private">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+        </Method>
+        <Method name="followRoute" returnType="void" visibility="public"/>
+        <Method name="statusSearch" returnType="void" visibility="private"/>
+        <Method name="pickUpClient" returnType="void" visibility="public">
+          <Argument type="Person" name="pClient"/>
+          <Argument type="Block" name="pBlock"/>
+        </Method>
+        <Method name="dropClient" returnType="void" visibility="public"/>
+        <Method name="park" returnType="void" visibility="public">
+          <Argument type="char" name="pDestination"/>
+        </Method>
+        <Method name="search" returnType="void" visibility="public"/>
+        <Method name="parade" returnType="void" visibility="public"/>
+        <Method name="loadSingleRoute" returnType="void" visibility="private">
+          <Argument type="int" name="pDestinI"/>
+          <Argument type="int" name="pDestinJ"/>
+        </Method>
+        <Method name="loadMultipleRutes" returnType="void" visibility="private">
+          <Argument type="ArrayList&lt;Character&gt;" name="pBlockList"/>
+        </Method>
+        <Method name="getRoute" returnType="LinkedList&lt;Coord&gt;" visibility="private">
+          <Argument type="Coord" name="pOrigin"/>
+          <Argument type="Coord" name="pObjetive"/>
+        </Method>
+        <Method name="QueueToHM" returnType="HashMap&lt;String, Coord&gt;" visibility="private">
+          <Argument type="LinkedList&lt;Coord&gt;" name="pQueue"/>
+        </Method>
+        <Method name="loadNewRoute" returnType="void" visibility="private"/>
+        <Method name="getPosition" returnType="Coord" visibility="public"/>
+        <Method name="getPending" returnType="LinkedList&lt;LinkedList&lt;Coord&gt;&gt;" visibility="public"/>
+        <Method name="setPending" returnType="void" visibility="public">
+          <Argument type="LinkedList&lt;LinkedList&lt;Coord&gt;&gt;" name="pending"/>
+        </Method>
+        <Method name="getActualRouteHS" returnType="HashMap&lt;String, Coord&gt;" visibility="public"/>
+        <Method name="setActualRouteHS" returnType="void" visibility="public">
+          <Argument type="HashMap&lt;String, Coord&gt;" name="actualRouteHS"/>
+        </Method>
+        <Method name="getPendingHS" returnType="LinkedList&lt;HashMap&lt;String, Coord&gt;&gt;" visibility="public"/>
+        <Method name="setPendingHS" returnType="void" visibility="public">
+          <Argument type="LinkedList&lt;HashMap&lt;String, Coord&gt;&gt;" name="pendingHS"/>
+        </Method>
+        <Method name="getPathHS" returnType="HashMap&lt;String, Coord&gt;" visibility="public"/>
+        <Method name="setPathHS" returnType="void" visibility="public">
+          <Argument type="HashMap&lt;String, Coord&gt;" name="pathHS"/>
+        </Method>
+        <Method name="getActualRoute" returnType="LinkedList&lt;Coord&gt;" visibility="public"/>
+        <Method name="setActualRoute" returnType="void" visibility="public">
+          <Argument type="LinkedList&lt;Coord&gt;" name="actualRoute"/>
+        </Method>
+        <Method name="getCurrentI" returnType="int" visibility="public"/>
+        <Method name="setCurrentI" returnType="void" visibility="public">
+          <Argument type="int" name="currentI"/>
+        </Method>
+        <Method name="getCurrentJ" returnType="int" visibility="public"/>
+        <Method name="setCurrentJ" returnType="void" visibility="public">
+          <Argument type="int" name="currentJ"/>
+        </Method>
+        <Method name="getCurrentState" returnType="String" visibility="public"/>
+        <Method name="getDesI" returnType="int" visibility="public"/>
+        <Method name="setDesI" returnType="void" visibility="public">
+          <Argument type="int" name="desI"/>
+        </Method>
+        <Method name="getDesJ" returnType="int" visibility="public"/>
+        <Method name="setDesJ" returnType="void" visibility="public">
+          <Argument type="int" name="desJ"/>
+        </Method>
+        <Method name="getId" returnType="String" visibility="public"/>
+        <Method name="setMap" returnType="void" visibility="public">
+          <Argument type="CityMap" name="map"/>
+        </Method>
+        <Method name="setAlgorithm" returnType="void" visibility="public">
+          <Argument type="AStar" name="algorithm"/>
+        </Method>
+        <Method name="getClient" returnType="Person" visibility="public"/>
+        <Method name="setClient" returnType="void" visibility="public">
+          <Argument type="Person" name="client"/>
+        </Method>
+        <Method name="getIdSection" returnType="ArrayList&lt;String&gt;" visibility="public"/>
+        <Method name="setIdSection" returnType="void" visibility="public">
+          <Argument type="ArrayList&lt;String&gt;" name="idSection"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="EventEmiter" package="fsm" visibility="public" xPosition="1821.0" yPosition="1563.0">
+      <Fields>
+        <Field name="listener" type="ArrayList&lt;FSM&gt;" visibility="private"/>
+        <Field name="listenerById" type="HashMap&lt;String, FSM&gt;" visibility="private"/>
+        <Field name="queue" type="LinkedList&lt;Event&gt;" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="update" returnType="void" visibility="public"/>
+        <Method name="register" returnType="void" visibility="public">
+          <Argument type="FSM" name="pListener"/>
+        </Method>
+        <Method name="send" returnType="void" visibility="public">
+          <Argument type="String" name="pMessage"/>
+          <Argument type="String" name="pId"/>
+        </Method>
+        <Method name="send" returnType="void" visibility="public">
+          <Argument type="String" name="pMessage"/>
+        </Method>
+        <Method name="addToQueue" returnType="void" visibility="private">
+          <Argument type="Event" name="pEvent"/>
+        </Method>
+        <Method name="getListener" returnType="ArrayList&lt;FSM&gt;" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Event" package="fsm" visibility="public" xPosition="162.0" yPosition="710.0">
+      <Fields>
+        <Field name="fsm" type="FSM" visibility="private"/>
+        <Field name="message" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="FSM" name="fsm"/>
+          <Argument type="String" name="message"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getMessage" returnType="String" visibility="public"/>
+        <Method name="setMessage" returnType="void" visibility="public">
+          <Argument type="String" name="message"/>
+        </Method>
+        <Method name="getFsm" returnType="FSM" visibility="public"/>
+        <Method name="setFsm" returnType="void" visibility="public">
+          <Argument type="FSM" name="fsm"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="FSM" package="fsm" visibility="public" xPosition="450.0" yPosition="1301.0">
+      <Fields>
+        <Field name="owner" type="Object" visibility="private"/>
+        <Field name="states" type="ArrayList&lt;State&gt;" visibility="private"/>
+        <Field name="current" type="State" visibility="private"/>
+        <Field name="id" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="Object" name="owner"/>
+          <Argument type="ArrayList&lt;State&gt;" name="states"/>
+          <Argument type="State" name="current"/>
+          <Argument type="String" name="id"/>
+          <Argument type="EventEmiter" name="emiter"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getOwner" returnType="Object" visibility="public"/>
+        <Method name="setOwner" returnType="void" visibility="public">
+          <Argument type="Object" name="owner"/>
+        </Method>
+        <Method name="getStates" returnType="ArrayList&lt;State&gt;" visibility="public"/>
+        <Method name="setStates" returnType="void" visibility="public">
+          <Argument type="ArrayList&lt;State&gt;" name="states"/>
+        </Method>
+        <Method name="getCurrent" returnType="State" visibility="public"/>
+        <Method name="setCurrent" returnType="void" visibility="public">
+          <Argument type="State" name="current"/>
+        </Method>
+        <Method name="getId" returnType="String" visibility="public"/>
+        <Method name="onMessage" returnType="void" visibility="public">
+          <Argument type="String" name="pMessage"/>
+        </Method>
+        <Method name="findAccept" returnType="State" visibility="public">
+          <Argument type="String" name="pMessage"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Block" package="map" visibility="public" xPosition="2852.0" yPosition="914.0">
+      <Fields>
+        <Field name="i" type="int" visibility="private"/>
+        <Field name="j" type="int" visibility="private"/>
+        <Field name="symbol" type="char" visibility="private"/>
+        <Field name="people" type="ArrayList&lt;Person&gt;" visibility="private"/>
+        <Field name="sidewalks" type="int[][]" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+          <Argument type="char" name="pSymbol"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getSymbol" returnType="char" visibility="public"/>
+        <Method name="setSymbol" returnType="void" visibility="public">
+          <Argument type="char" name="symbol"/>
+        </Method>
+        <Method name="getI" returnType="int" visibility="public"/>
+        <Method name="setI" returnType="void" visibility="public">
+          <Argument type="int" name="i"/>
+        </Method>
+        <Method name="getJ" returnType="int" visibility="public"/>
+        <Method name="setJ" returnType="void" visibility="public">
+          <Argument type="int" name="j"/>
+        </Method>
+        <Method name="getDestI" returnType="int" visibility="public"/>
+        <Method name="getDestJ" returnType="int" visibility="public"/>
+        <Method name="newPerson" returnType="void" visibility="public">
+          <Argument type="Person" name="pPerson"/>
+        </Method>
+        <Method name="pickUpClient" returnType="Person" visibility="public"/>
+        <Method name="areClientsWaiting" returnType="boolean" visibility="public"/>
+        <Method name="isStreet" returnType="boolean" visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+        </Method>
+        <Method name="cantPerson" returnType="int" visibility="public"/>
+        <Method name="getPeople" returnType="ArrayList&lt;Person&gt;" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="CityMap" package="map" visibility="public" xPosition="1456.0" yPosition="1970.0">
+      <Fields>
+        <Field name="fileHandler" type="FileManager" visibility="private"/>
+        <Field name="nodeMatrix" type="Cell[][]" visibility="private"/>
+        <Field name="charMatrix" type="char[][]" visibility="private"/>
+        <Field name="streetBlocks" type="HashMap&lt;Character, Block&gt;" visibility="private"/>
+        <Field name="residentBlocks" type="ArrayList&lt;Character&gt;" visibility="private"/>
+        <Field name="posibleBlocks" type="ArrayList&lt;Character&gt;" visibility="private"/>
+        <Field name="workBlocks" type="ArrayList&lt;Character&gt;" visibility="private"/>
+        <Field name="overlord" type="EventEmiter" visibility="private" isFinal="true"/>
+        <Field name="inicialTaxi" type="ArrayList&lt;TaxiCab&gt;" visibility="private"/>
+        <Field name="dayCycle" type="DayCycle" visibility="private" isFinal="true"/>
+        <Field name="taxiList" type="ArrayList&lt;TaxiCab&gt;" visibility="public"/>
+        <Field name="algorithm" type="AStar" visibility="private"/>
+        <Field name="section" type="ArrayList&lt;StreetSection&gt;" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="EventEmiter" name="pEmiter"/>
+          <Argument type="int" name="pDayTime"/>
+          <Argument type="int" name="pPercentageWork"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="iniComponents" returnType="void" visibility="public">
+          <Argument type="String" name="pMatrixFile"/>
+          <Argument type="String" name="pBuildingsFile"/>
+        </Method>
+        <Method name="transformMatrix" returnType="void" visibility="private">
+          <Argument type="char[][]" name="pMatrix"/>
+          <Argument type="int" name="pLengthI"/>
+          <Argument type="int" name="pLenghtJ"/>
+        </Method>
+        <Method name="setNewClients" returnType="void" visibility="private">
+          <Argument type="ArrayList&lt;Person&gt;" name="pClients"/>
+        </Method>
+        <Method name="setBuildings" returnType="void" visibility="private">
+          <Argument type="ArrayList&lt;String&gt;" name="pList"/>
+        </Method>
+        <Method name="addNewClient" returnType="boolean" visibility="public">
+          <Argument type="char" name="pCurrentBlock"/>
+          <Argument type="char" name="pHome"/>
+          <Argument type="char" name="pWork"/>
+        </Method>
+        <Method name="addNewClient" returnType="boolean" visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+          <Argument type="char" name="pHome"/>
+          <Argument type="char" name="pWork"/>
+        </Method>
+        <Method name="addNewClient" returnType="boolean" visibility="public">
+          <Argument type="Person" name="pPerson"/>
+        </Method>
+        <Method name="addSeveralClients" returnType="void" visibility="public">
+          <Argument type="int" name="pAmount"/>
+        </Method>
+        <Method name="tryToPickUp" returnType="Person" visibility="public">
+          <Argument type="int" name="pPosI"/>
+          <Argument type="int" name="pPosJ"/>
+        </Method>
+        <Method name="getClosetBlocks" returnType="ArrayList&lt;Character&gt;" visibility="public">
+          <Argument type="int" name="pPosI"/>
+          <Argument type="int" name="pPosJ"/>
+        </Method>
+        <Method name="closetBlock" returnType="Character" visibility="private">
+          <Argument type="ArrayList&lt;Character&gt;" name="pVisited"/>
+          <Argument type="int" name="posI"/>
+          <Argument type="int" name="posJ"/>
+        </Method>
+        <Method name="validBlock" returnType="boolean" visibility="public">
+          <Argument type="Character" name="pBlock"/>
+        </Method>
+        <Method name="defineSection" returnType="void" visibility="public"/>
+        <Method name="createTrafficJam" returnType="void" visibility="public"/>
+        <Method name="setDayTime" returnType="void" visibility="public">
+          <Argument type="int" name="pAmount"/>
+        </Method>
+        <Method name="setPercentage" returnType="void" visibility="public">
+          <Argument type="int" name="pPercentage"/>
+        </Method>
+        <Method name="getNodeMatrix" returnType="Cell[][]" visibility="public"/>
+        <Method name="getIncialTaxis" returnType="ArrayList&lt;TaxiCab&gt;" visibility="public"/>
+        <Method name="getWorkBlocks" returnType="ArrayList&lt;Character&gt;" visibility="public"/>
+        <Method name="getResidentBlocks" returnType="ArrayList&lt;Character&gt;" visibility="public"/>
+        <Method name="getPosibleBlocks" returnType="ArrayList&lt;Character&gt;" visibility="public"/>
+        <Method name="getHSBlocks" returnType="HashMap&lt;Character, Block&gt;" visibility="public"/>
+        <Method name="getCharMatrix" returnType="char[][]" visibility="public"/>
+        <Method name="getTime" returnType="int" visibility="public"/>
+        <Method name="initializeTaxis" returnType="void" visibility="private">
+          <Argument type="AStar" name="pAlgorithm"/>
+        </Method>
+        <Method name="addTaxi" returnType="void" visibility="public"/>
+        <Method name="getTaxiList" returnType="ArrayList&lt;TaxiCab&gt;" visibility="public"/>
+        <Method name="getClientList" returnType="ArrayList&lt;Person&gt;" visibility="public"/>
+        <Method name="updateTaxiPos" returnType="void" visibility="public">
+          <Argument type="TaxiCab" name="pTaxi"/>
+        </Method>
+        <Method name="removeTaxiPos" returnType="void" visibility="private">
+          <Argument type="String" name="pId"/>
+          <Argument type="TaxiCab" name="pTaxi"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="DayCycle" package="map" visibility="public" xPosition="25.0" yPosition="1876.0">
+      <Fields>
+        <Field name="dayUnit" type="int" visibility="private"/>
+        <Field name="clock" type="int" visibility="private"/>
+        <Field name="percentageWork" type="int" visibility="private"/>
+        <Field name="timer" type="int" visibility="private"/>
+        <Field name="circadian" type="FSM" visibility="private"/>
+        <Field name="overlord" type="EventEmiter" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="pDayUnit"/>
+          <Argument type="int" name="pPercentageWork"/>
+          <Argument type="EventEmiter" name="pOverlord"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUpStates" returnType="void" visibility="private">
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Method>
+        <Method name="beProductive" returnType="void" visibility="public"/>
+        <Method name="beNonProductive" returnType="void" visibility="public"/>
+        <Method name="reduceTime" returnType="void" visibility="public"/>
+        <Method name="getDayUnit" returnType="int" visibility="public"/>
+        <Method name="setDayUnit" returnType="void" visibility="public">
+          <Argument type="int" name="pDayUnit"/>
+        </Method>
+        <Method name="getCircadian" returnType="FSM" visibility="public"/>
+        <Method name="setCircadian" returnType="void" visibility="public">
+          <Argument type="FSM" name="circadian"/>
+        </Method>
+        <Method name="getCurrentState" returnType="String" visibility="public"/>
+        <Method name="getTimer" returnType="int" visibility="public"/>
+        <Method name="getClock" returnType="int" visibility="public"/>
+        <Method name="getPercentageWork" returnType="int" visibility="public"/>
+        <Method name="setPercentageWork" returnType="void" visibility="public">
+          <Argument type="int" name="percentageWork"/>
+        </Method>
+        <Method name="getProductiveTime" returnType="int" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="StreetSection" package="map" visibility="public" xPosition="702.0" yPosition="2016.0">
+      <Fields>
+        <Field name="street" type="HashMap&lt;String, Cell&gt;" visibility="private"/>
+        <Field name="stress" type="double" visibility="private"/>
+        <Field name="taxisRecord" type="HashMap&lt;String, TaxiCab&gt;" visibility="private"/>
+        <Field name="taxisActual" type="HashMap&lt;String, TaxiCab&gt;" visibility="private"/>
+        <Field name="cost" type="double" visibility="private"/>
+        <Field name="relief" type="double" visibility="private"/>
+        <Field name="vigilante" type="FSM" visibility="private"/>
+        <Field name="overlord" type="EventEmiter" visibility="private"/>
+        <Field name="id" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="HashMap&lt;String, Cell&gt;" name="pStreet"/>
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="setUpStates" returnType="void" visibility="private">
+          <Argument type="EventEmiter" name="pEmiter"/>
+        </Method>
+        <Method name="getStreet" returnType="HashMap&lt;String, Cell&gt;" visibility="public"/>
+        <Method name="setStreet" returnType="void" visibility="public">
+          <Argument type="HashMap&lt;String, Cell&gt;" name="street"/>
+        </Method>
+        <Method name="getStress" returnType="double" visibility="public"/>
+        <Method name="setStress" returnType="void" visibility="public">
+          <Argument type="double" name="stress"/>
+        </Method>
+        <Method name="addTaxi" returnType="String" visibility="public">
+          <Argument type="TaxiCab" name="pTaxi"/>
+        </Method>
+        <Method name="removeTaxi" returnType="boolean" visibility="public">
+          <Argument type="TaxiCab" name="pTaxi"/>
+        </Method>
+        <Method name="increasing" returnType="void" visibility="public"/>
+        <Method name="decreasing" returnType="void" visibility="public"/>
+        <Method name="areTaxis" returnType="boolean" visibility="public"/>
+        <Method name="getCost" returnType="double" visibility="public"/>
+        <Method name="setCost" returnType="void" visibility="public">
+          <Argument type="double" name="cost"/>
+        </Method>
+        <Method name="isStreet" returnType="boolean" visibility="public">
+          <Argument type="String" name="pKey"/>
+        </Method>
+        <Method name="getId" returnType="String" visibility="public"/>
+        <Method name="getRelief" returnType="double" visibility="public"/>
+        <Method name="setRelief" returnType="void" visibility="public">
+          <Argument type="double" name="relief"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Simulation" package="taxikarma" visibility="public" xPosition="2176.0" yPosition="1905.0">
+      <Fields>
+        <Field name="map" type="CityMap" visibility="public"/>
+        <Field name="overlord" type="EventEmiter" visibility="private"/>
+        <Field name="pathOn" type="boolean" visibility="private"/>
+        <Field name="routeOn" type="boolean" visibility="private"/>
+        <Field name="daemon" type="int" visibility="private"/>
+        <Field name="fileHandler" type="FileManager" visibility="private"/>
+        <Field name="FILENAME" type="String" visibility="private" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="pMapFile"/>
+          <Argument type="String" name="pBuildingFile"/>
+        </Constructor>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="setDayCycle" returnType="void" visibility="public">
+          <Argument type="int" name="pDayDuration"/>
+          <Argument type="int" name="pWorkPercentage"/>
+        </Method>
+        <Method name="setFiles" returnType="void" visibility="public">
+          <Argument type="String" name="pMapFile"/>
+          <Argument type="String" name="pBuildingFile"/>
+        </Method>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String[]" name="args"/>
+        </Method>
+        <Method name="getEE" returnType="EventEmiter" visibility="public"/>
+        <Method name="createMap" returnType="String" visibility="public"/>
+        <Method name="createMapTraffic" returnType="String" visibility="public"/>
+        <Method name="createMapUI" returnType="String" visibility="public"/>
+        <Method name="TransClientHM" returnType="HashMap&lt;String, Person&gt;" visibility="private">
+          <Argument type="ArrayList&lt;Person&gt;" name="pClientList"/>
+        </Method>
+        <Method name="TransTaxiHM" returnType="HashMap&lt;String, TaxiCab&gt;" visibility="private">
+          <Argument type="ArrayList&lt;TaxiCab&gt;" name="pTaxiList"/>
+        </Method>
+        <Method name="getPaths" returnType="HashMap&lt;String, Coord&gt;" visibility="private">
+          <Argument type="ArrayList&lt;TaxiCab&gt;" name="pTaxiList"/>
+        </Method>
+        <Method name="getRoutes" returnType="HashMap&lt;String, Coord&gt;" visibility="private">
+          <Argument type="ArrayList&lt;TaxiCab&gt;" name="pTaxiList"/>
+        </Method>
+        <Method name="writeTrafficFile" returnType="void" visibility="public"/>
+        <Method name="getTimeFormat" returnType="String" visibility="public"/>
+        <Method name="getBuildingAmount" returnType="String" visibility="public"/>
+        <Method name="getAmountPeople" returnType="HashMap&lt;Character, Integer&gt;" visibility="private"/>
+        <Method name="switchRoute" returnType="void" visibility="public"/>
+        <Method name="switchPath" returnType="void" visibility="public"/>
+        <Method name="getTime" returnType="int" visibility="public"/>
+        <Method name="addTaxi" returnType="void" visibility="public"/>
+        <Method name="addClient" returnType="void" visibility="public">
+          <Argument type="char" name="pCurret"/>
+          <Argument type="char" name="pHome"/>
+          <Argument type="char" name="pWork"/>
+        </Method>
+        <Method name="addClient" returnType="void" visibility="public">
+          <Argument type="int" name="pCant"/>
+        </Method>
+        <Method name="isPathOn" returnType="boolean" visibility="public"/>
+        <Method name="isRouteOn" returnType="boolean" visibility="public"/>
+        <Method name="getDaemon" returnType="int" visibility="public"/>
+        <Method name="setDaemon" returnType="void" visibility="public">
+          <Argument type="int" name="daemon"/>
+        </Method>
+        <Method name="animate" returnType="void" visibility="public"/>
+        <Method name="run" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="MainWindow" package="ui" visibility="public" xPosition="2982.0" yPosition="1428.0">
+      <Fields>
+        <Field name="simulation" type="Simulation" visibility="private" isStatic="true"/>
+        <Field name="overlord" type="EventEmiter" visibility="private" isStatic="true"/>
+        <Field name="btn_addClient" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_addTaxi" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_animate" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_cantClients" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_dayCycle" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_load" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_mode" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_park" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_path" type="javax.swing.JButton" visibility="private"/>
+        <Field name="btn_route" type="javax.swing.JButton" visibility="private"/>
+        <Field name="jLabel1" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel10" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel11" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel12" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel13" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel14" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel15" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel16" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel17" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel18" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel19" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel2" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel20" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel21" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel3" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel4" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel5" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel6" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel7" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel8" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel9" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jScrollPane1" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="jScrollPane2" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="jSeparator1" type="javax.swing.JSeparator" visibility="private"/>
+        <Field name="jSeparator2" type="javax.swing.JSeparator" visibility="private"/>
+        <Field name="jSeparator3" type="javax.swing.JSeparator" visibility="private"/>
+        <Field name="l_Time" type="javax.swing.JLabel" visibility="private" isStatic="true"/>
+        <Field name="rb_parade" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="rb_search" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="taxiModeGroup" type="javax.swing.ButtonGroup" visibility="private"/>
+        <Field name="tf_Percentage" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_actual" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_animate" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_building" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_cantClients" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_dayDuration" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_home" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_map" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_park" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="tf_work" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="txtA_Cant" type="javax.swing.JTextArea" visibility="private" isStatic="true"/>
+        <Field name="txtA_Map" type="javax.swing.JTextArea" visibility="private" isStatic="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="initComponents" returnType="// &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents void" visibility="private"/>
+        <Method name="rb_searchActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="tf_animateActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_animateActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_parkActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_modeActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_pathActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_routeActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_cantClientsActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_addClientActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="tf_homeActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_addTaxiActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="tf_mapActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_loadActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="tf_dayDurationActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="btn_dayCycleActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="upadateMap" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="pMap"/>
+        </Method>
+        <Method name="upadateBuildings" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="pAmount"/>
+        </Method>
+        <Method name="upadateTime" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="pTime"/>
+        </Method>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="Coord" package="utils" visibility="public" xPosition="798.0" yPosition="137.0">
+      <Fields>
+        <Field name="i" type="int" visibility="private"/>
+        <Field name="j" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="pI"/>
+          <Argument type="int" name="pJ"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getI" returnType="int" visibility="public"/>
+        <Method name="setI" returnType="void" visibility="public">
+          <Argument type="int" name="i"/>
+        </Method>
+        <Method name="getJ" returnType="int" visibility="public"/>
+        <Method name="setJ" returnType="void" visibility="public">
+          <Argument type="int" name="j"/>
+        </Method>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="FileManager" package="utils" visibility="public" xPosition="2112.0" yPosition="1563.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="readFileMatrix" returnType="char[][]" visibility="public">
+          <Argument type="String" name="pFilename"/>
+        </Method>
+        <Method name="readFileSrings" returnType="ArrayList&lt;String&gt;" visibility="public">
+          <Argument type="String" name="pFilename"/>
+        </Method>
+        <Method name="createFile" returnType="void" visibility="public">
+          <Argument type="String" name="pFileName"/>
+          <Argument type="String" name="pContent"/>
+        </Method>
+        <Method name="appendFile" returnType="void" visibility="public">
+          <Argument type="String" name="pFileName"/>
+          <Argument type="String" name="pContent"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Interface name="State" package="fsm" visibility="public" xPosition="25.0" yPosition="1402.0">
+      <Methods>
+        <Method name="accepts" returnType="boolean" visibility="public">
+          <Argument type="String" name="pMessage"/>
+          <Argument type="State" name="pCurrentState"/>
+        </Method>
+        <Method name="onEnter" returnType="void" visibility="public">
+          <Argument type="FSM" name="pFsm"/>
+        </Method>
+        <Method name="onUpdate" returnType="void" visibility="public">
+          <Argument type="FSM" name="pFsm"/>
+        </Method>
+        <Method name="onExit" returnType="void" visibility="public">
+          <Argument type="FSM" name="pFsm"/>
+        </Method>
+        <Method name="getState" returnType="String" visibility="public"/>
+      </Methods>
+    </Interface>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <HasRelation name="overlord" source="entities.TaxiCab" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="motor" source="entities.TaxiCab" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="queue" source="fsm.EventEmiter" target="fsm.Event" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="LinkedList&lt;Event&gt;"/>
+    <HasRelation name="schedule" source="entities.Person" target="map.DayCycle" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="algorithm.Cell" target="algorithm.Cell" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="taxiList" source="map.CityMap" target="entities.TaxiCab" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;TaxiCab&gt;"/>
+    <HasRelation name="actualRouteHS" source="entities.TaxiCab" target="utils.Coord" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;String, Coord&gt;"/>
+    <HasRelation name="fileHandler" source="map.CityMap" target="utils.FileManager" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pathParent" source="algorithm.Cell" target="algorithm.Cell" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="fsm" source="fsm.Event" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="algorithm" source="entities.TaxiCab" target="algorithm.AStar" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.FSM" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pending" source="entities.TaxiCab" target="utils.Coord" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="LinkedList&lt;LinkedList&lt;Coord&gt;&gt;"/>
+    <HasRelation name="algorithm" source="map.CityMap" target="algorithm.AStar" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="fileHandler" source="taxikarma.Simulation" target="utils.FileManager" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.personstates.GettingReady" target="fsm.State"/>
+    <UseRelation source="fsm.State" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="map" source="taxikarma.Simulation" target="map.CityMap" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="CityMap"/>
+    <HasRelation name="overlord" source="map.CityMap" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.daystates.Productive" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="overlord" source="map.DayCycle" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.taxistates.Parading" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.personstates.Resting" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pathHS" source="entities.TaxiCab" target="utils.Coord" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;String, Coord&gt;"/>
+    <HasRelation name="actualRoute" source="entities.TaxiCab" target="utils.Coord" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="LinkedList&lt;Coord&gt;"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.taxistates.Parked" target="fsm.State"/>
+    <HasRelation name="listener" source="fsm.EventEmiter" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;FSM&gt;"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.personstates.Waiting" target="fsm.State"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.personstates.Working" target="fsm.State"/>
+    <HasRelation name="listenerById" source="fsm.EventEmiter" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;String, FSM&gt;"/>
+    <UseRelation source="fsm.taxistates.Parading" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.taxistates.OnRoute" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="overlord" source="taxikarma.Simulation" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="algorithm.SearchAlgorithm" target="algorithm.Cell" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="states" source="fsm.FSM" target="fsm.State" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;State&gt;"/>
+    <UseRelation source="fsm.Transition" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="vigilante" source="map.StreetSection" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.State" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="inicialTaxi" source="map.CityMap" target="entities.TaxiCab" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;TaxiCab&gt;"/>
+    <UseRelation source="fsm.personstates.GettingReady" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="brain" source="entities.Person" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="map" source="entities.TaxiCab" target="map.CityMap" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="CityMap"/>
+    <HasRelation name="client" source="entities.TaxiCab" target="entities.Person" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="circadian" source="map.DayCycle" target="fsm.FSM" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="people" source="map.Block" target="entities.Person" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Person&gt;"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.sectionstates.Decreasing" target="fsm.State"/>
+    <HasRelation name="overlord" source="ui.MainWindow" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.sectionstates.Keeping" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.personstates.Resting" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.Transition" target="fsm.FSM" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="taxisRecord" source="map.StreetSection" target="entities.TaxiCab" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;String, TaxiCab&gt;"/>
+    <HasRelation name="overlord" source="entities.Person" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.personstates.Working" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.daystates.Productive" target="fsm.State"/>
+    <UseRelation source="fsm.taxistates.OnRoute" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="pendingHS" source="entities.TaxiCab" target="utils.Coord" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="LinkedList&lt;HashMap&lt;String, Coord&gt;&gt;"/>
+    <HasRelation name="dayCycle" source="map.CityMap" target="map.DayCycle" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.taxistates.Searching" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="streetBlocks" source="map.CityMap" target="map.Block" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;Character, Block&gt;"/>
+    <HasRelation name="current" source="fsm.FSM" target="fsm.State" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="simulation" source="ui.MainWindow" target="taxikarma.Simulation" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.sectionstates.Decreasing" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.taxistates.Searching" target="fsm.State"/>
+    <UseRelation source="fsm.personstates.Waiting" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="fsm.taxistates.Parked" target="fsm.State" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="taxisActual" source="map.StreetSection" target="entities.TaxiCab" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="HashMap&lt;String, TaxiCab&gt;"/>
+    <ImplementsRelation name="&lt;&lt;implements&gt;&gt;" source="fsm.sectionstates.Keeping" target="fsm.State"/>
+    <HasRelation name="section" source="map.CityMap" target="map.StreetSection" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;StreetSection&gt;"/>
+    <HasRelation name="overlord" source="map.StreetSection" target="fsm.EventEmiter" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+  </ClassDiagramRelations>
+</ClassDiagram>

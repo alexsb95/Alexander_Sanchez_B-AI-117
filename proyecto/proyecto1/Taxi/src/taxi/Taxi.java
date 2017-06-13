@@ -10,19 +10,16 @@ package taxi;
  * @author Alex
  */
 
-import Matrix.Block;
 import Matrix.Cell;
 import Matrix.CityMap;
 import Matrix.Coord;
+import UI.Input;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utils.PriorityList;
 
 public class Taxi implements Runnable{
 
@@ -55,6 +52,7 @@ public class Taxi implements Runnable{
         pathOn =  false;
         
         daemon = 0;
+
     }
     
     public static void main(String[] args) {
@@ -62,7 +60,7 @@ public class Taxi implements Runnable{
         /* Inicializa */
 
         Taxi tx = new Taxi();
-
+        
         /* 
         //Prueba 0
         addClients('A','S');

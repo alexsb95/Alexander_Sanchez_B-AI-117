@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Matrix;
 
-import java.util.ArrayList;
+package algorithm;
 
 /**
  *
@@ -17,12 +11,12 @@ public class Cell {
 	private Cell pathParent;
 	private int costFromStart;
 	private int estimatedCostToGoal;
-        private ArrayList<Coord> priority;
+        private double weight;
+
         
         public Cell(int pX, int pY){
             x = pX;
             y = pY;
-            priority = new ArrayList<>();
         }   
         
         public int getX() {
@@ -62,27 +56,34 @@ public class Cell {
 		this.estimatedCostToGoal = estimatedCostToGoal;
 	}
 
-        public void addPriority(ArrayList<Coord> pList){
-            priority = pList;
-        }
-        
-        public ArrayList<Coord> getPriority(){
-            return priority;
-        }
-
 	public int compareTo(Object other) {
 		    int v = this.getCost() - ((Cell)other).getCost();
 		    return (v>0)?1:(v<0)?-1:0; // sign function
 	}
 	
-	  public int getCost() {
+	public int getCost() {
 	    return costFromStart + estimatedCostToGoal;
-	  }
+	}
 
+        public int getCost(Cell pCell){
+		  return costFromStart + getEstimatedCost(pCell);
+	}
 	  
-	  public int getEstimatedCost(Cell pObjetive){
-		  return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
-	  }
+        public int getEstimatedCost(Cell pObjetive){
+            return  Math.abs(x - pObjetive.getX()) + Math.abs( y - pObjetive.getY());
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
+        }
+        
+        public void changeWeight(double weight) {
+            this.weight += weight;
+        }
 	  
 	  @Override
 	  public String toString(){

@@ -9,20 +9,17 @@ public class Main {
 	private static ArrayList<Graph> Queries = new ArrayList<>();
 	
 	 public static void main (String [ ] args) {
-         
-         Main newProgram = new Main();
-         
- 		Scanner scanner = new Scanner(System.in);
-        readInput(scanner);
- 	    scanner.close();
 
- 	    for(Graph element : Queries){
- 	    	BFS Algoritm = new BFS(element);
- 	 	    Algoritm.travel();
- 	    }
- 	    
+            Main newProgram = new Main();
 
+           Scanner scanner = new Scanner(System.in);
+           readInput(scanner);
+           scanner.close();
 
+           for(Graph element : Queries){
+               BFS Algoritm = new BFS(element);
+                   Algoritm.travel();
+           }
       }
 
 	 
