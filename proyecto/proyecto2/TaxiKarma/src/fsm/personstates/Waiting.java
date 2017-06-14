@@ -16,7 +16,7 @@ public class Waiting implements State{
 
     @Override
     public boolean accepts(String pMessage, State pCurrentState) {
-        if("wait".equals(pMessage) && ("Resting".equals(pCurrentState.getState()) || "Working".equals(pCurrentState.getState()))){
+        if("wait".equals(pMessage) && ("Resting".equals(pCurrentState.getState()) || "Working".equals(pCurrentState.getState())) || "GettingReady".equals(pCurrentState.getState())){
             return true;
         }
         return false;

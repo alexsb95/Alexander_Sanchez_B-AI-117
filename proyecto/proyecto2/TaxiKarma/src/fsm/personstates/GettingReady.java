@@ -36,8 +36,8 @@ public class GettingReady implements State{
 
     @Override
     public void onExit(FSM fsm) {
-        Person ppl = (Person)fsm.getOwner();
-        ppl.setDestination(ppl.getWorkplace());
+        /*Person ppl = (Person)fsm.getOwner();
+        ppl.setDestination(ppl.getWorkplace());*/
     }
 
     @Override

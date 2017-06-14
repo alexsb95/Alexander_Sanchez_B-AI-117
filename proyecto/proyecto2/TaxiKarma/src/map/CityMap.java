@@ -81,7 +81,7 @@ public class CityMap {
                     streetBlocks.put(Character.toUpperCase(pMatrix[i][j]), new Block(i,j,Character.toUpperCase(charMatrix[i][j])));      
                     posibleBlocks.add(Character.toUpperCase(pMatrix[i][j]));
                     nodeMatrix[i][j] = null;
-                }else if( pMatrix[i][j] == '#'){
+                }else if( pMatrix[i][j] == '&'){
                     Person client = new Person(i,j);
                     clients.add(client);
                     
@@ -151,7 +151,7 @@ public class CityMap {
             Person client = new Person(block.getI()-1, block.getJ(), pWork, pHome, pCurrentBlock, overlord, dayCycle);
             // Adds it to the corresponding block 
             block.newPerson(client);
-            System.out.println("Added cli: " + client.toString());
+            //System.out.println("Added cli: " + client.toString());
             return true;
         }
 
@@ -167,7 +167,7 @@ public class CityMap {
                 client = new Person(pI, pJ, pWork, pHome, entry.getKey(), overlord, dayCycle);
                 // Adds it to the corresponding block 
                 entry.getValue().newPerson(client);
-                System.out.println("Added cli: " + client.toString());
+                //System.out.println("Added cli: " + client.toString());
                 return true;
             }
         }
@@ -176,7 +176,7 @@ public class CityMap {
     }
     
     public boolean addNewClient(Person pPerson){
-        System.out.println("Added cli: " + pPerson.toString());
+        //System.out.println("Added cli: " + pPerson.toString());
         streetBlocks.get( Character.toUpperCase(pPerson.getCurrentBlock()) ).newPerson(pPerson);
         //clientList.add(pPerson);
         return true;
@@ -184,15 +184,13 @@ public class CityMap {
     
     public void addSeveralClients(int pAmount){
         int home, work;
-        boolean wasAdded;
         for(int cant=0; cant < pAmount; cant++){
             Random rnd = new Random();
             work = rnd.nextInt(workBlocks.size() - 1);
              do {  
                 home = rnd.nextInt(residentBlocks.size() - 1);
             } while ( home == work );      
-                             wasAdded = addNewClient(streetBlocks.get(residentBlocks.get(home)).getI() - 1, streetBlocks.get(residentBlocks.get(home)).getJ(), 
-                                        residentBlocks.get(home),  workBlocks.get(work));
+            addNewClient(residentBlocks.get(home),residentBlocks.get(home),  workBlocks.get(work));
         }
         
     }
@@ -366,9 +364,9 @@ public class CityMap {
             if(entry.getValue().cantPerson() > 0){
                 
                 ArrayList<Person> clients = entry.getValue().getPeople();
-                clients.forEach((client) -> {
+                for(Person client : clients){
                     peopleList.add(client);
-                }); 
+                } 
             }
         }
         return peopleList;
@@ -394,7 +392,7 @@ public class CityMap {
                 removeTaxiPos(idStreet, pTaxi);
             }
         }
-                System.out.println("New: " + ids.toString() + " -- Old:"+ pTaxi.getIdSection());
+                //System.out.println("New: " + ids.toString() + " -- Old:"+ pTaxi.getIdSection());
         pTaxi.setIdSection(ids);
         
 

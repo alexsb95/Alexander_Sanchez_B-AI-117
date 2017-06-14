@@ -218,7 +218,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel14.setText("Mapa");
 
-        tf_map.setText("Map.txt");
+        tf_map.setText("Map2.txt");
         tf_map.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tf_mapActionPerformed(evt);
@@ -228,7 +228,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("Edificios");
 
-        tf_building.setText("Buildings.txt");
+        tf_building.setText("Buildings2.txt");
 
         btn_load.setText("Cargar");
         btn_load.addActionListener(new java.awt.event.ActionListener() {
@@ -240,7 +240,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel16.setText("Porcentaje de trabajo");
 
-        tf_dayDuration.setText("5000");
+        tf_dayDuration.setText("500");
         tf_dayDuration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tf_dayDurationActionPerformed(evt);
@@ -625,9 +625,9 @@ public class MainWindow extends javax.swing.JFrame {
         if(tf_actual.getText().length() != 0 && tf_work.getText().length() != 0 && tf_home.getText().length() != 0){
             char actual = tf_actual.getText().charAt(0);
             char work = tf_work.getText().charAt(0);
-            char home = tf_work.getText().charAt(0);
+            char home = tf_home.getText().charAt(0);
             
-            simulation.addClient(actual, work, home);
+            simulation.addClient(actual, home, work);
         } 
     }//GEN-LAST:event_btn_addClientActionPerformed
 

@@ -32,7 +32,7 @@ public class Working implements State{
     @Override
     public void onExit(FSM fsm) {
         Person ppl = (Person)fsm.getOwner();
-        ppl.setDestination(ppl.getWorkplace());
+        ppl.setDestination(ppl.getHome());
     }
 
     @Override

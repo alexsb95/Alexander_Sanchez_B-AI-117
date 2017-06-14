@@ -9,6 +9,7 @@ import fsm.EventEmiter;
 import fsm.FSM;
 import fsm.personstates.Resting;
 import fsm.State;
+import fsm.personstates.GettingReady;
 import fsm.personstates.Waiting;
 import fsm.personstates.Working;
 import java.util.ArrayList;
@@ -54,19 +55,23 @@ public class Person {
         states.add(new Waiting());
         states.add(new Working());
         states.add(new Resting());
+        states.add(new GettingReady());
         
         State currentState;
         
         if(currentBlock == home){
             currentState = new Resting();
+            this.destination = this.workplace;
         }else if(currentBlock == workplace){
             currentState = new Working();
+            this.destination = this.home;
         }else{
             this.destination = this.home;
             currentState = new Waiting();
         }
         String uniqueID = UUID.randomUUID().toString();
         brain = new FSM(this, states, currentState, uniqueID, pEmiter);
+        System.out.println("Persona agregada: " + this.toString());
     }
     
     
@@ -130,14 +135,17 @@ public class Person {
         this.defaultTimer = pAmout;        
     }
     
-    public void setDelay(){
+    public void setDelay(){ 
         Random rnd = new Random();
         timer = rnd.nextInt((int)(schedule.getProductiveTime()*0.10));
+        
+        System.out.println("delay "+timer);
     }
     
     public void reduceTime(){
         this.timer--;
         if(this.timer <= 0){
+            System.out.println("ESPERA");
             overlord.send("wait", brain.getId());
         }
     }
@@ -148,9 +156,11 @@ public class Person {
     
     public void update(){
         if(this.currentBlock == this.home){
-            overlord.send("gowork", brain.getId());
-        }else if(this.currentBlock == this.workplace){
+            System.out.println("Resting::");
             overlord.send("gohome", brain.getId());
+        }else if(this.currentBlock == this.workplace){
+            System.out.println("Working::");
+            overlord.send("gowork", brain.getId());
         }else{
             overlord.send("wait", brain.getId());
         }

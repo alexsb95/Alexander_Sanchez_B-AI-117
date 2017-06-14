@@ -41,12 +41,14 @@ public class DayCycle {
     
     public void beProductive(){
         timer = (int) (dayUnit * (float)(percentageWork /100.0));
-        overlord.send("getReady");
+        System.out.println("Productive: " + timer);
+        overlord.send("getready");
     }
     
     public void beNonProductive(){
         timer = (int) (dayUnit * (float)((100 - percentageWork) /100.0));
-        overlord.send("getReady");
+        System.out.println("NON Productive: " + timer);
+        overlord.send("getready");
     }
     
     public void reduceTime(){
@@ -54,7 +56,7 @@ public class DayCycle {
         timer--;
         if(timer <= 0){
             
-             //System.out.println("Entra");
+            System.out.println("Entra: " + this.getCurrentState());
             switch(circadian.getCurrent().getState() ){
                 case "Productive":
                     overlord.send("benonproductive", circadian.getId());

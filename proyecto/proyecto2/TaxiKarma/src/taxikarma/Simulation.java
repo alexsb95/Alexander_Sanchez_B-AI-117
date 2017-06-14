@@ -110,7 +110,10 @@ public class Simulation extends Thread {
             for(int j = 0; j < jLen; j++){
                 //Print the taxi
                 if(taxiListHM.containsKey(i+"-"+j)){
-                    strMap +=  '@';
+                    if(taxiListHM.get(i+"-"+j).isTaken())
+                        strMap += '@';
+                    else
+                        strMap +=  'O';
                 }//Print the path
                 else if(pathOn && pathHM.containsKey(i + "-" + j)){
                     strMap +=  '*';
@@ -118,7 +121,29 @@ public class Simulation extends Thread {
                 else if(routeOn && routeHM.containsKey(i + "-" + j)){
                      strMap +=  '+';
                 }else if (clientListHM.containsKey(i + "-" + j)){
-                    strMap += 'o';
+                    
+                    if(null!=clientListHM.get(i + "-" + j).getCurrentState())
+                        switch (clientListHM.get(i + "-" + j).getCurrentState()) {
+                            case "Waiting":
+                                strMap += 'e';
+                                break;
+                            case "Working":
+                                strMap += 't';
+                                break;
+                            case "Resting":
+                                strMap += 'd';
+                                break;                            
+                            case "GettingReady":
+                                if(clientListHM.get(i + "-" + j).getDestination() == clientListHM.get(i + "-" + j).getHome()){
+                                    strMap += 't';
+                                }else if(clientListHM.get(i + "-" + j).getDestination() == clientListHM.get(i + "-" + j).getWorkplace()){
+                                     strMap += 'd';
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                   
                 }else{      
                     strMap +=  cityMap[i][j];
                 }
@@ -143,13 +168,17 @@ public class Simulation extends Thread {
         HashMap<String,TaxiCab> taxiListHM = TransTaxiHM(map.getTaxiList());
         HashMap<String,Coord> pathHM = getPaths(map.getTaxiList());
         HashMap<String,Coord> routeHM = getRoutes(map.getTaxiList());
-
+        System.out.println("Client list: "+clientListHM.toString());
+        System.out.println("Client cant: "+clientListHM.size());
         
         for(int i = 0; i < iLen; i++){
             for(int j = 0; j < jLen; j++){
                 //Print the taxi
                 if(taxiListHM.containsKey(i+"-"+j)){
-                    strMap +=  '@';
+                    if(taxiListHM.get(i+"-"+j).isTaken())
+                        strMap += '@';
+                    else
+                        strMap +=  'O';
                 }//Print the path
                 else if(pathOn && pathHM.containsKey(i + "-" + j)){
                     strMap +=  '*';
@@ -157,7 +186,29 @@ public class Simulation extends Thread {
                 else if(routeOn && routeHM.containsKey(i + "-" + j)){
                      strMap +=  '+';
                 }else if (clientListHM.containsKey(i + "-" + j)){
-                    strMap += 'o';
+                    
+                    if(null!=clientListHM.get(i + "-" + j).getCurrentState())
+                        switch (clientListHM.get(i + "-" + j).getCurrentState()) {
+                            case "Waiting":
+                                strMap += 'e';
+                                break;
+                            case "Working":
+                                strMap += 't';
+                                break;
+                            case "Resting":
+                                strMap += 'd';
+                                break;                            
+                            case "GettingReady":
+                                if(clientListHM.get(i + "-" + j).getDestination() == clientListHM.get(i + "-" + j).getHome()){
+                                    strMap += 't';
+                                }else if(clientListHM.get(i + "-" + j).getDestination() == clientListHM.get(i + "-" + j).getWorkplace()){
+                                     strMap += 'd';
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    
                 }else if(nodes[i][j] != null && nodes[i][j].getWeight() > 0){
                    strMap += Math.round(nodes[i][j].getWeight());
                 }else{      
@@ -212,10 +263,15 @@ public class Simulation extends Thread {
         return strMap;
     }
     
+        //Return one client per block, the last one added
     private HashMap<String,Person> TransClientHM(ArrayList<Person> pClientList){
         HashMap <String,Person> clientsHM = new HashMap<>();
         for(Person client : pClientList){
-            clientsHM.put(client.getCurrentI()+"-"+client.getCurrentJ(), client);
+            boolean exist = clientsHM.containsKey(client.getCurrentI()+"-"+client.getCurrentJ());
+            if(!exist || (exist && !"Wating".equals(clientsHM.get(client.getCurrentI()+"-"+client.getCurrentJ()).getCurrentState()))){
+                clientsHM.put(client.getCurrentI()+"-"+client.getCurrentJ(), client);
+            }
+            
         }
         return clientsHM;
     }
@@ -365,12 +421,13 @@ public class Simulation extends Thread {
     public void animate(){
         while(true){
             if(getDaemon() > 0){
-                System.out.println("Hola");
+                System.out.println("Animando");
                 overlord.send("update");
                 overlord.update();
                 
-                System.out.println(createMapTraffic());
-                MainWindow.upadateMap(createMap());
+                String mapSTR = createMapTraffic();
+                System.out.println(mapSTR);
+                MainWindow.upadateMap(mapSTR);
                 MainWindow.upadateBuildings(getBuildingAmount());
                 MainWindow.upadateTime(getTimeFormat());
                 

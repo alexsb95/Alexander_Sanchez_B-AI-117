@@ -1,2 +1,2 @@
-Residents/T/U/V/W/X/Y
-Workplaces/A/B/C/D/E/F/G/H/I/J/k/O/L/Z/P/Q/R/S
+Residents/T/U/V/W/X/Y/D
+Workplaces/A/B/C/E/F/G/H/I/J/k/O/L/Z/P/Q/R/S

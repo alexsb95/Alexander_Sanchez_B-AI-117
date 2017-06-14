@@ -105,15 +105,19 @@ public class StreetSection {
     }
     
     public void decreasing(){
-       System.out.print("Bajando id: " + this.id+ " stress: " + this.stress );
+       //System.out.print("Bajando id: " + this.id+ " stress: " + this.stress );
+        if(!this.taxisActual.isEmpty()){
+            this.overlord.send("keep", vigilante.getId());
+        }
+       
         if(this.stress >= relief){
             setStress(-1*relief);
-             System.out.println(" resultado: " + this.stress );
+             //System.out.println(" resultado: " + this.stress );
         }else{
             this.taxisRecord.clear();
             setStress(-this.stress);
             this.overlord.send("keep", vigilante.getId());
-             System.out.println("resultadoL " + this.stress );
+             //System.out.println("resultadoL " + this.stress );
         }   
     }
     

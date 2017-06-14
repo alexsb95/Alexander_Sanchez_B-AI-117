@@ -342,6 +342,10 @@ public class TaxiCab {
         this.idSection = idSection;
     }
     
+    public boolean isTaken(){
+        return client != null;
+    }
+    
 
     @Override
     public String toString(){
