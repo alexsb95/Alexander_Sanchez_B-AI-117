@@ -17,6 +17,7 @@ public class Cell {
         public Cell(int pX, int pY){
             x = pX;
             y = pY;
+            weight = 0;
         }   
         
         public int getX() {
